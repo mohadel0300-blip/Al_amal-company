@@ -11,18 +11,60 @@
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
 
   <!-- Tailwind (CDN) -->
+  <script>
+    // Tailwind CDN config (theme + fonts)
+    tailwind = window.tailwind || {};
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { cairo: ["Cairo", "system-ui", "-apple-system", "Segoe UI", "Roboto", "sans-serif"] },
+          boxShadow: {
+            soft: "0 10px 30px rgba(2,6,23,0.06)"
+          }
+        }
+      }
+    };
+  </script>
   <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
-    html, body { font-family: Cairo, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    :root{
+      /* Brand palette (Poultry / Fresh / Trust) */
+      --brand: #0f766e;        /* teal-700 */
+      --brand2:#14532d;        /* green-900 */
+      --accent:#f59e0b;        /* amber-500 */
+      --danger:#ef4444;        /* red-500 */
+      --ink:   #0f172a;        /* slate-900 */
+      --muted: #64748b;        /* slate-500 */
+      --bg:    #f8fafc;        /* slate-50 */
+      --card:  #ffffff;
+      --line:  #e2e8f0;        /* slate-200 */
+    }
+    html, body { font-family: Cairo, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background: var(--bg); color: var(--ink); }
     input[type=number]::-webkit-outer-spin-button,
     input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
     input[type=number] { -moz-appearance: textfield; }
     button, a, input, select { touch-action: manipulation; }
+
+    /* Subtle background pattern (premium, very light) */
+    .app-bg{
+      background:
+        radial-gradient(1200px 600px at 10% 0%, rgba(15,118,110,.08), transparent 60%),
+        radial-gradient(900px 500px at 90% 0%, rgba(245,158,11,.10), transparent 55%),
+        linear-gradient(#f8fafc, #f8fafc);
+    }
+
+    /* Nice scroll on tables */
+    .table-wrap::-webkit-scrollbar{ height: 10px; }
+    .table-wrap::-webkit-scrollbar-thumb{ background: #cbd5e1; border-radius: 999px; }
+    .table-wrap::-webkit-scrollbar-track{ background: #f1f5f9; border-radius: 999px; }
+
+    /* Chips */
+    .chip{ display:inline-flex; align-items:center; gap:8px; padding:8px 10px; border-radius:999px; border:1px solid var(--line); background:#fff; }
   </style>
 </head>
 
-<body class="bg-slate-100">
+<body class="app-bg">
   <div id="root"></div>
 
   <!-- React + ReactDOM (CDN) -->
@@ -55,6 +97,23 @@
       printer: (p) => (<svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9V4h12v5"/><path d="M6 18h12v2H6z"/><path d="M6 14h12v4H6z"/><path d="M6 13H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-2"/></svg>),
       lock: (p) => (<svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>),
       settings: (p) => (<svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.22 4.22l1.42 1.42"/><path d="M18.36 18.36l1.42 1.42"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.22 19.78l1.42-1.42"/><path d="M18.36 5.64l1.42-1.42"/><circle cx="12" cy="12" r="3"/></svg>),
+
+      // Simple poultry/brand mark (egg + leaf vibe)
+      brand: (p) => (
+        <svg {...p} viewBox="0 0 64 64" fill="none">
+          <defs>
+            <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stopColor="var(--brand)"/>
+              <stop offset="1" stopColor="var(--brand2)"/>
+            </linearGradient>
+          </defs>
+          <path d="M34 6c10 0 18 10 18 24S44 58 34 58 16 44 16 30 24 6 34 6Z" fill="url(#g1)" opacity=".16"/>
+          <path d="M32 10c9 0 16 9 16 21S41 54 32 54 16 44 16 31 23 10 32 10Z" fill="url(#g1)" />
+          <path d="M40 18c7 2 10 8 10 13-6-2-12-5-16-10 2-2 4-3 6-3Z" fill="var(--accent)" opacity=".9"/>
+          <circle cx="27" cy="30" r="2.2" fill="#0b1220" opacity=".85"/>
+          <path d="M25 38c2 3 5 5 8 5 4 0 7-2 10-6" stroke="#0b1220" strokeWidth="3" strokeLinecap="round" opacity=".35"/>
+        </svg>
+      )
     };
 
     function Icon({ name, size = 20, className = "" }) {
@@ -120,28 +179,32 @@
   <title>${escapeHtml(title)}</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
   <style>
+    :root{--brand:#0f766e;--brand2:#14532d;--accent:#f59e0b;--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;}
     *{box-sizing:border-box}
-    body{font-family:Cairo,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;margin:0;background:#fff;color:#0f172a}
-    .wrap{max-width:820px;margin:24px auto;padding:24px;border:1px solid #e2e8f0;border-radius:16px}
-    .top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;border-bottom:1px solid #e2e8f0;padding-bottom:16px}
+    body{font-family:Cairo,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;margin:0;background:#fff;color:var(--ink)}
+    .wrap{max-width:860px;margin:24px auto;padding:24px;border:1px solid var(--line);border-radius:18px}
+    .top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;border-bottom:1px solid var(--line);padding-bottom:16px}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,var(--brand),var(--brand2));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900}
     .brand h1{margin:0;font-size:22px}
-    .brand p{margin:6px 0 0;color:#64748b;font-weight:700}
-    .meta{min-width:260px}
-    .meta .box{background:#f8fafc;border:1px solid #e2e8f0;padding:12px;border-radius:12px}
+    .brand p{margin:6px 0 0;color:var(--muted);font-weight:800}
+    .meta{min-width:280px}
+    .meta .box{background:#f8fafc;border:1px solid var(--line);padding:12px;border-radius:14px}
     .meta .row{display:flex;justify-content:space-between;gap:10px;margin:6px 0}
-    .meta .k{color:#64748b;font-weight:800}
+    .meta .k{color:var(--muted);font-weight:900}
     .meta .v{font-weight:900}
     h2{margin:18px 0 12px;font-size:18px}
     table{width:100%;border-collapse:collapse;margin-top:10px}
-    th,td{border:1px solid #e2e8f0;padding:10px;text-align:right}
+    th,td{border:1px solid var(--line);padding:10px;text-align:right}
     th{background:#f1f5f9;color:#334155;font-weight:900}
     .totals{margin-top:16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-    .tbox{background:#f8fafc;border:1px solid #e2e8f0;padding:12px;border-radius:12px}
-    .tbox .k{color:#64748b;font-weight:900;font-size:12px}
+    .tbox{background:#f8fafc;border:1px solid var(--line);padding:12px;border-radius:14px}
+    .tbox .k{color:var(--muted);font-weight:900;font-size:12px}
     .tbox .v{font-weight:900;font-size:16px;margin-top:4px}
+    .badge{display:inline-flex;align-items:center;gap:8px;background:rgba(15,118,110,.10);border:1px solid rgba(15,118,110,.20);padding:6px 10px;border-radius:999px;font-weight:900;color:var(--brand)}
     .sign{margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
     .line{height:44px;border-bottom:2px dashed #cbd5e1}
-    .foot{margin-top:14px;color:#64748b;font-weight:800;font-size:12px}
+    .foot{margin-top:14px;color:var(--muted);font-weight:800;font-size:12px}
     @media print {
       body{margin:0}
       .wrap{border:none;margin:0;max-width:none;border-radius:0}
@@ -152,8 +215,11 @@
   <div class="wrap">
     <div class="top">
       <div class="brand">
-        <h1>${escapeHtml(companyName || "برو تشيكس")}</h1>
-        <p>${escapeHtml(title)}</p>
+        <div class="logo">PC</div>
+        <div>
+          <h1>${escapeHtml(companyName || "برو تشيكس")}</h1>
+          <p><span class="badge">${escapeHtml(title)}</span></p>
+        </div>
       </div>
       <div class="meta">
         <div class="box">
@@ -191,11 +257,11 @@
 
     <div class="sign">
       <div>
-        <div class="k" style="color:#64748b;font-weight:900;margin-bottom:8px">توقيع العميل</div>
+        <div class="k" style="color:var(--muted);font-weight:900;margin-bottom:8px">توقيع العميل</div>
         <div class="line"></div>
       </div>
       <div>
-        <div class="k" style="color:#64748b;font-weight:900;margin-bottom:8px">توقيع الشركة</div>
+        <div class="k" style="color:var(--muted);font-weight:900;margin-bottom:8px">توقيع الشركة</div>
         <div class="line"></div>
       </div>
     </div>
@@ -215,47 +281,90 @@
     }
 
     /***********************
-     * UI helpers
+     * UI helpers (Brand)
      ***********************/
     const Card = ({ children, className = "" }) => (
-      <div className={"bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-100 " + className}>{children}</div>
+      <div className={"bg-white p-4 sm:p-6 rounded-2xl shadow-soft border border-slate-100 " + className}>{children}</div>
     );
     const Notice = ({ variant="info", children }) => {
       const styles =
-        variant === "info" ? "bg-blue-50 border-blue-200 text-blue-900" :
-        variant === "warn" ? "bg-orange-50 border-orange-200 text-orange-900" :
+        variant === "info" ? "bg-emerald-50 border-emerald-200 text-emerald-900" :
+        variant === "warn" ? "bg-amber-50 border-amber-200 text-amber-900" :
         "bg-red-50 border-red-200 text-red-900";
-      return <div className={`border p-4 rounded-xl ${styles}`}>{children}</div>;
+      return <div className={`border p-4 rounded-2xl ${styles}`}>{children}</div>;
     };
-    const Field = ({ label, children, className="" }) => (
+    const Field = ({ label, hint, children, className="" }) => (
       <div className={"flex flex-col gap-1 " + className}>
         <label className="text-xs text-slate-500 font-black">{label}</label>
         {children}
+        {hint ? <div className="text-[11px] text-slate-400 font-bold">{hint}</div> : null}
       </div>
     );
     const Input = (props) => (
-      <input {...props} className={"border border-slate-200 bg-white p-3 rounded-xl outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-300 transition w-full " + (props.className||"")} />
+      <input
+        {...props}
+        className={
+          "border border-slate-200 bg-white p-3 rounded-xl outline-none focus:ring-2 focus:ring-[color:rgba(15,118,110,.18)] focus:border-[color:rgba(15,118,110,.45)] transition w-full " +
+          (props.className||"")
+        }
+      />
     );
     const Select = (props) => (
-      <select {...props} className={"border border-slate-200 bg-white p-3 rounded-xl outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-300 transition w-full " + (props.className||"")} />
+      <select
+        {...props}
+        className={
+          "border border-slate-200 bg-white p-3 rounded-xl outline-none focus:ring-2 focus:ring-[color:rgba(15,118,110,.18)] focus:border-[color:rgba(15,118,110,.45)] transition w-full " +
+          (props.className||"")
+        }
+      />
     );
     const Button = ({ variant="primary", className="", children, ...props }) => {
-      const base = "px-4 py-3 rounded-xl font-black transition inline-flex items-center justify-center gap-2 w-full sm:w-auto";
+      const base = "px-4 py-3 rounded-xl font-black transition inline-flex items-center justify-center gap-2 w-full sm:w-auto active:scale-[.99]";
       const styles =
-        variant === "primary" ? "bg-blue-600 text-white hover:bg-blue-700" :
+        variant === "primary" ? "bg-[color:var(--brand)] text-white hover:brightness-110" :
         variant === "success" ? "bg-emerald-600 text-white hover:bg-emerald-700" :
-        variant === "danger" ? "bg-red-500 text-white hover:bg-red-600" :
-        "bg-slate-100 text-slate-900 hover:bg-slate-200";
-      return <button {...props} className={`${base} ${styles} ${className}`}>{children}</button>;
+        variant === "danger" ? "bg-[color:var(--danger)] text-white hover:brightness-110" :
+        variant === "secondary" ? "bg-slate-100 text-slate-900 hover:bg-slate-200" :
+        "bg-slate-900 text-white hover:bg-slate-800";
+      return <button {...props} className={`${base} ${styles} ${className}`} />;
     };
     const SmallBtn = ({ className="", ...props }) => (
-      <button {...props} className={"p-2 rounded-lg hover:bg-slate-100 transition " + className} />
+      <button {...props} className={"p-2 rounded-xl hover:bg-slate-100 transition " + className} />
     );
-    const TabBtn = ({ active, icon, label, onClick }) => (
-      <button onClick={onClick} className={"flex items-center gap-2 px-4 py-3 rounded-xl font-black transition w-full text-right " + (active ? "bg-blue-600 text-white" : "text-slate-700 hover:bg-blue-50 hover:text-blue-700")}>
-        <Icon name={icon} size={18} />
-        <span>{label}</span>
+    const TabBtn = ({ active, icon, label, onClick, badge }) => (
+      <button
+        onClick={onClick}
+        className={
+          "flex items-center justify-between gap-2 px-4 py-3 rounded-2xl font-black transition w-full text-right border " +
+          (active
+            ? "bg-[color:rgba(15,118,110,.10)] text-[color:var(--brand)] border-[color:rgba(15,118,110,.25)]"
+            : "text-slate-700 hover:bg-white/70 border-transparent hover:border-slate-200")
+        }
+      >
+        <span className="flex items-center gap-2">
+          <Icon name={icon} size={18} />
+          <span>{label}</span>
+        </span>
+        {badge ? (
+          <span className="text-xs font-black bg-white border border-slate-200 rounded-full px-2 py-1 text-slate-700">
+            {badge}
+          </span>
+        ) : null}
       </button>
+    );
+
+    const SectionTitle = ({ icon, title, desc }) => (
+      <div className="flex items-start justify-between gap-3 mb-3">
+        <div className="flex items-center gap-2">
+          <div className="p-2 rounded-xl bg-[color:rgba(15,118,110,.10)] text-[color:var(--brand)] border border-[color:rgba(15,118,110,.20)]">
+            <Icon name={icon} size={18}/>
+          </div>
+          <div>
+            <div className="font-black text-slate-900">{title}</div>
+            {desc ? <div className="text-xs text-slate-500 font-bold mt-0.5">{desc}</div> : null}
+          </div>
+        </div>
+      </div>
     );
 
     /***********************
@@ -271,8 +380,16 @@
       const [loginPin, setLoginPin] = useState("");
       const [loginErr, setLoginErr] = useState("");
 
-      const [activeTab, setActiveTab] = useState("sales"); // start simple
-      const [filterDate, setFilterDate] = useState(""); // manual filter (admin)
+      const [activeTab, setActiveTab] = useState("sales");
+      const [filterDate, setFilterDate] = useState("");
+
+      // Company settings (brand)
+      const [company, setCompany] = useLocalStorageState("pc_company", {
+        name: "برو تشيكس",
+        short: "PC",
+        phone: "",
+        address: "",
+      });
 
       // Master data
       const [products, setProducts] = useLocalStorageState("pc_products", [
@@ -301,7 +418,10 @@
       const [saleForm, setSaleForm] = useState({ date:"", customer:customers[0]?.name||"", driver:drivers[0]?.name||"", product:products[0]?.name||"", quantity:"", sellPrice:"", paid:"", notes:"" });
       const [expenseForm, setExpenseForm] = useState({ date:"", category:"", driver:"", amount:"", notes:"" });
 
-      const [err, setErr] = useState({ purchase:"", sale:"", expense:"", admin:"" });
+      const [err, setErr] = useState({ purchase:"", sale:"", expense:"", admin:"", products:"" });
+
+      // Products CRUD
+      const [productForm, setProductForm] = useState({ category:"", name:"", unit:"" });
 
       const productUnit = (name) => products.find(p => p.name === name)?.unit || "";
 
@@ -337,7 +457,9 @@
         const estProfit = salesValue - (soldQty*avgBuy) - expensesValue;
 
         const todaySales = filterDate ? sales.filter(s => s.date === filterDate).reduce((sum,s)=>sum+toNumber(s.total),0) : 0;
-        return { owedToSuppliers, owedFromCustomers, estProfit, todaySales };
+        const todayExpenses = filterDate ? expenses.filter(e => e.date === filterDate).reduce((sum,e)=>sum+toNumber(e.amount),0) : 0;
+
+        return { owedToSuppliers, owedFromCustomers, estProfit, todaySales, todayExpenses };
       }, [purchases, sales, expenses, filterDate]);
 
       // Settlements (admin, per filterDate)
@@ -345,18 +467,19 @@
         if (!filterDate) return [];
         const map = {};
         sales.filter(s=>s.date===filterDate).forEach(s=>{
-          map[s.driver] ||= { name:s.driver, cash:0, expenses:0, total:0, qty:0, debt:0 };
+          map[s.driver] ||= { name:s.driver, cash:0, expenses:0, total:0, qty:0, debt:0, count:0 };
           map[s.driver].cash += toNumber(s.paid);
           map[s.driver].total += toNumber(s.total);
           map[s.driver].qty += toNumber(s.quantity);
           map[s.driver].debt += toNumber(s.debt);
+          map[s.driver].count += 1;
         });
         expenses.filter(e=>e.date===filterDate).forEach(e=>{
           if (!e.driver) return;
-          map[e.driver] ||= { name:e.driver, cash:0, expenses:0, total:0, qty:0, debt:0 };
+          map[e.driver] ||= { name:e.driver, cash:0, expenses:0, total:0, qty:0, debt:0, count:0 };
           map[e.driver].expenses += toNumber(e.amount);
         });
-        return Object.values(map).map(d => ({...d, net: d.cash - d.expenses}));
+        return Object.values(map).map(d => ({...d, net: d.cash - d.expenses})).sort((a,b)=>b.net-a.net);
       }, [sales, expenses, filterDate]);
 
       // Receipt
@@ -475,7 +598,7 @@
 
         setReceiptPreview({
           title:"إيصال بيع",
-          companyName:"برو تشيكس",
+          companyName: company?.name || "برو تشيكس",
           date:d,
           customer:c,
           driver:driverLabel,
@@ -490,7 +613,7 @@
         printReceiptHTML(receiptPreview);
       }
 
-      // Pin change (admin)
+      // PIN change (admin)
       const [pinEdit, setPinEdit] = useState({ username:"ali", newPin:"" });
       function changePin(){
         if(currentUser?.role!=="admin") return;
@@ -502,15 +625,84 @@
         setPinEdit(p=>({...p,newPin:""}));
       }
 
+      // Products actions (admin)
+      function addProduct(){
+        setErr(e=>({...e,products:""}));
+        if(currentUser?.role!=="admin") return setErr(e=>({...e,products:"ممنوع — مدير فقط."}));
+        const category = (productForm.category||"").trim();
+        const name = (productForm.name||"").trim();
+        const unit = (productForm.unit||"").trim();
+        if(!category||!name||!unit) return setErr(e=>({...e,products:"املأ: التصنيف + اسم المنتج + الوحدة."}));
+
+        const exists = products.some(p => p.name.toLowerCase() === name.toLowerCase());
+        if(exists) return setErr(e=>({...e,products:"المنتج ده موجود بالفعل."}));
+
+        const row = { id: Date.now(), category, name, unit };
+        setProducts(prev => [row, ...prev]);
+        setProductForm({ category:"", name:"", unit:"" });
+
+        // Ensure forms show it
+        setPurchaseForm(f=>({...f, product: row.name}));
+        setSaleForm(f=>({...f, product: row.name}));
+      }
+
+      function removeProduct(id){
+        if(currentUser?.role!=="admin") return;
+        const p = products.find(x=>x.id===id);
+        if(!p) return;
+        // Safety: don't delete if referenced in ops
+        const used = purchases.some(x=>x.product===p.name) || sales.some(x=>x.product===p.name);
+        if(used) return alert("لا يمكن حذف منتج مستخدم في عمليات (مشتريات/مبيعات). يمكنك تغييره أو إضافة منتج جديد بدلًا منه.");
+        if(!confirm("حذف المنتج؟")) return;
+        setProducts(prev => prev.filter(x=>x.id!==id));
+      }
+
+      function updateCompanyField(key, value){
+        setCompany(prev => ({...prev, [key]: value}));
+      }
+
+      // Quick helpers
+      const nav = [
+        { id:"dashboard", icon:"dashboard", label:"لوحة التحكم", group:"تقارير" },
+        { id:"products", icon:"tag", label:"المنتجات", group:"إدارة" },
+        { id:"purchases", icon:"cart", label:"المشتريات", group:"عمليات" },
+        { id:"sales", icon:"truck", label:"المبيعات", group:"عمليات" },
+        { id:"receipts", icon:"printer", label:"الإيصالات", group:"عمليات" },
+        { id:"settlements", icon:"users", label:"تقفيل اليومية", group:"تقارير" },
+        { id:"expenses", icon:"receipt", label:"المصروفات", group:"عمليات" },
+        { id:"settings", icon:"settings", label:"الإعدادات", group:"إدارة" },
+      ].filter(t => canSeeTab(currentUser?.role, t.id));
+
+      const titleByTab = {
+        dashboard:"نظرة عامة",
+        products:"المنتجات",
+        purchases:"المشتريات",
+        sales:"المبيعات",
+        receipts:"الإيصالات",
+        settlements:"تقفيل اليومية",
+        expenses:"المصروفات",
+        settings:"الإعدادات",
+      };
+
+      function goTab(id){ setActiveTab(id); setMenuOpen(false); }
+
+      const groupedNav = useMemo(() => {
+        const groups = { "عمليات":[], "تقارير":[], "إدارة":[] };
+        nav.forEach(i => (groups[i.group] ||= []).push(i));
+        return groups;
+      }, [nav]);
+
       if(!currentUser){
         return (
           <div className="min-h-screen flex items-center justify-center p-4">
-            <div className="w-full max-w-md bg-white border border-slate-200 rounded-2xl shadow-sm p-6">
+            <div className="w-full max-w-md bg-white border border-slate-200 rounded-3xl shadow-soft p-6">
               <div className="flex items-center gap-3 mb-4">
-                <div className="p-3 rounded-xl bg-blue-600 text-white"><Icon name="lock" size={22}/></div>
+                <div className="p-2 rounded-2xl bg-[color:var(--brand)] text-white">
+                  <Icon name="brand" size={28}/>
+                </div>
                 <div>
-                  <h1 className="text-xl font-black text-slate-900">تسجيل الدخول</h1>
-                  <p className="text-xs text-slate-500 font-bold">صلاحيات مختلفة لكل موظف</p>
+                  <h1 className="text-xl font-black text-slate-900">{company?.name || "برو تشيكس"}</h1>
+                  <p className="text-xs text-slate-500 font-bold">تسجيل الدخول — صلاحيات مختلفة لكل موظف</p>
                 </div>
               </div>
 
@@ -526,78 +718,70 @@
                 <Button onClick={login}><Icon name="lock" size={18}/> دخول</Button>
               </div>
 
-              <div className="mt-4 bg-slate-50 border border-slate-200 rounded-xl p-3">
+              <div className="mt-4 bg-slate-50 border border-slate-200 rounded-2xl p-3">
                 <p className="text-xs text-slate-600 font-black">حسابات افتراضية:</p>
                 <ul className="text-xs text-slate-700 font-bold mt-1 list-disc pr-5">
                   <li>admin / 1234 (مدير)</li>
                   <li>ali / 0000 (علي عبدالله - إدخال بيانات فقط)</li>
                 </ul>
               </div>
+
+              <div className="mt-4 text-[11px] text-slate-400 font-bold">
+                ملاحظة: النظام ده LocalStorage (بدون سيرفر). للأمان الحقيقي نحتاج Back-end + حسابات حقيقية.
+              </div>
             </div>
           </div>
         );
       }
 
-      const nav = [
-        { id:"dashboard", icon:"dashboard", label:"لوحة التحكم" },
-        { id:"products", icon:"tag", label:"المنتجات" },
-        { id:"purchases", icon:"cart", label:"المشتريات" },
-        { id:"sales", icon:"truck", label:"المبيعات" },
-        { id:"receipts", icon:"printer", label:"الإيصالات" },
-        { id:"settlements", icon:"users", label:"تقفيل اليومية" },
-        { id:"expenses", icon:"receipt", label:"المصروفات" },
-        { id:"settings", icon:"settings", label:"الإعدادات" },
-      ].filter(t => canSeeTab(currentUser.role, t.id));
-
-      const titleByTab = {
-        dashboard:"نظرة عامة",
-        products:"المنتجات",
-        purchases:"المشتريات",
-        sales:"المبيعات",
-        receipts:"الإيصالات",
-        settlements:"تقفيل اليومية",
-        expenses:"المصروفات",
-        settings:"الإعدادات",
-      };
-
-      function goTab(id){ setActiveTab(id); setMenuOpen(false); }
+      const isAdmin = currentUser.role === "admin";
 
       return (
         <div className="min-h-screen">
-          <header className="sticky top-0 z-30 bg-white border-b border-slate-200">
+          {/* Header */}
+          <header className="sticky top-0 z-30 bg-white/90 backdrop-blur border-b border-slate-200">
             <div className="px-4 py-3 flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
-                <button className="p-2 rounded-xl hover:bg-slate-100 lg:hidden" onClick={()=>setMenuOpen(v=>!v)} aria-label="Menu">
+                <button className="p-2 rounded-2xl hover:bg-slate-100 lg:hidden" onClick={()=>setMenuOpen(v=>!v)} aria-label="Menu">
                   <Icon name={menuOpen ? "x" : "menu"} size={22}/>
                 </button>
+
                 <div className="flex items-center gap-2">
-                  <div className="p-2 rounded-xl bg-blue-600 text-white"><Icon name="package" size={18}/></div>
+                  <div className="p-2 rounded-2xl bg-[color:var(--brand)] text-white shadow-soft">
+                    <Icon name="brand" size={26}/>
+                  </div>
                   <div>
-                    <div className="font-black text-slate-900 leading-5">برو تشيكس</div>
+                    <div className="font-black text-slate-900 leading-5">{company?.name || "برو تشيكس"}</div>
                     <div className="text-xs text-slate-500 font-bold">{titleByTab[activeTab] || ""}</div>
                   </div>
                 </div>
               </div>
 
               <div className="flex items-center gap-2">
-                <div className="hidden sm:flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2">
+                <div className="hidden sm:flex items-center gap-2 bg-white border border-slate-200 rounded-2xl px-3 py-2">
                   <span className="text-xs text-slate-500 font-black">المخزون</span>
                   <span className="font-black text-slate-900">{formatQty(totalStock)}</span>
                 </div>
-                <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2">
+
+                <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-2xl px-3 py-2">
                   <span className="font-black text-slate-900">{currentUser.displayName}</span>
+                  <span className={"text-[11px] font-black px-2 py-1 rounded-full border " + (isAdmin ? "bg-emerald-50 border-emerald-200 text-emerald-800" : "bg-amber-50 border-amber-200 text-amber-800")}>
+                    {isAdmin ? "مدير" : "إدخال بيانات"}
+                  </span>
                 </div>
-                <button className="p-2 rounded-xl hover:bg-slate-100" onClick={logout} title="خروج">
+
+                <button className="p-2 rounded-2xl hover:bg-slate-100" onClick={logout} title="خروج">
                   <Icon name="logout" size={20} className="text-slate-700"/>
                 </button>
               </div>
             </div>
 
-            {currentUser.role==="admin" && (
+            {/* Admin filter */}
+            {isAdmin && (
               <div className="px-4 pb-3">
                 <div className="flex flex-col sm:flex-row sm:items-end gap-2">
                   <div className="flex-1">
-                    <Field label="فلتر بالتاريخ (لليومية/المبيعات)">
+                    <Field label="فلتر بالتاريخ (لليومية/التقارير)" hint="اختار يوم معين علشان يظهر تقفيل اليومية ومبيعات اليوم">
                       <Input type="date" value={filterDate} onChange={(e)=>setFilterDate(e.target.value)} />
                     </Field>
                   </div>
@@ -609,56 +793,199 @@
             )}
           </header>
 
+          {/* Mobile drawer */}
           {menuOpen && (
             <div className="fixed inset-0 z-40 lg:hidden" onClick={()=>setMenuOpen(false)}>
               <div className="absolute inset-0 bg-black/30"></div>
-              <div className="absolute top-0 right-0 h-full w-80 max-w-[85%] bg-white border-l border-slate-200 p-4 overflow-auto" onClick={(e)=>e.stopPropagation()}>
+              <div className="absolute top-0 right-0 h-full w-80 max-w-[85%] bg-white border-l border-slate-200 p-4 overflow-auto rounded-l-3xl" onClick={(e)=>e.stopPropagation()}>
                 <div className="flex items-center justify-between mb-3">
                   <div className="font-black text-slate-900">القائمة</div>
-                  <button className="p-2 rounded-xl hover:bg-slate-100" onClick={()=>setMenuOpen(false)}><Icon name="x" size={20}/></button>
+                  <button className="p-2 rounded-2xl hover:bg-slate-100" onClick={()=>setMenuOpen(false)}><Icon name="x" size={20}/></button>
                 </div>
-                <div className="space-y-2">
-                  {nav.map(t => <TabBtn key={t.id} active={activeTab===t.id} icon={t.icon} label={t.label} onClick={()=>goTab(t.id)} />)}
+
+                <div className="space-y-4">
+                  {Object.entries(groupedNav).map(([g, items]) => (
+                    <div key={g}>
+                      <div className="text-xs text-slate-500 font-black mb-2">{g}</div>
+                      <div className="space-y-2">
+                        {items.map(t => <TabBtn key={t.id} active={activeTab===t.id} icon={t.icon} label={t.label} onClick={()=>goTab(t.id)} />)}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                <div className="mt-4 text-xs text-slate-500 font-bold">
-                  صلاحيات: {currentUser.role==="admin" ? "مدير" : "إدخال بيانات فقط"}
+
+                <div className="mt-4 bg-slate-50 border border-slate-200 rounded-2xl p-3">
+                  <p className="text-xs text-slate-600 font-black">المخزون الحالي</p>
+                  <p className="text-2xl font-black text-slate-900">{formatQty(totalStock)}</p>
+                </div>
+
+                <div className="mt-3 text-[11px] text-slate-400 font-bold">
+                  صلاحياتك: {isAdmin ? "مدير" : "إدخال بيانات فقط"}
                 </div>
               </div>
             </div>
           )}
 
           <div className="lg:flex">
-            <aside className="hidden lg:block w-80 bg-white border-l border-slate-200 min-h-[calc(100vh-64px)] sticky top-[64px] p-4">
-              <div className="space-y-2">
-                {nav.map(t => <TabBtn key={t.id} active={activeTab===t.id} icon={t.icon} label={t.label} onClick={()=>goTab(t.id)} />)}
-              </div>
-              <div className="mt-4 bg-slate-50 border border-slate-200 rounded-xl p-3">
-                <p className="text-xs text-slate-600 font-black">المخزون الحالي</p>
-                <p className="text-2xl font-black text-slate-900">{formatQty(totalStock)}</p>
+            {/* Desktop sidebar */}
+            <aside className="hidden lg:block w-80 p-4 sticky top-[64px] min-h-[calc(100vh-64px)]">
+              <div className="bg-white border border-slate-200 rounded-3xl p-4 shadow-soft">
+                <div className="flex items-center justify-between">
+                  <div className="font-black text-slate-900">الأقسام</div>
+                  <div className="chip text-xs font-black text-slate-700">
+                    <span className="text-slate-500">المخزون</span>
+                    <span>{formatQty(totalStock)}</span>
+                  </div>
+                </div>
+
+                <div className="mt-4 space-y-4">
+                  {Object.entries(groupedNav).map(([g, items]) => (
+                    <div key={g}>
+                      <div className="text-xs text-slate-500 font-black mb-2">{g}</div>
+                      <div className="space-y-2">
+                        {items.map(t => <TabBtn key={t.id} active={activeTab===t.id} icon={t.icon} label={t.label} onClick={()=>goTab(t.id)} />)}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-4 bg-slate-50 border border-slate-200 rounded-2xl p-3">
+                  <p className="text-xs text-slate-600 font-black">هوية النظام</p>
+                  <p className="text-sm font-black text-slate-900 mt-1">{company?.name || "برو تشيكس"}</p>
+                  <p className="text-xs text-slate-500 font-bold mt-1">شكل حديث + ألوان مناسبة لشركة دواجن</p>
+                </div>
               </div>
             </aside>
 
+            {/* Main */}
             <main className="flex-1 p-4 sm:p-6 space-y-4">
-              {activeTab==="dashboard" && currentUser.role==="admin" && (
+              {/* Dashboard */}
+              {activeTab==="dashboard" && isAdmin && (
                 <div className="space-y-4">
-                  <Notice variant="info"><div className="font-black">لوحة التحكم للمدير فقط.</div></Notice>
+                  <Notice variant="info">
+                    <div className="font-black">
+                      لوحة التحكم (مدير فقط). استخدم فلتر التاريخ علشان يظهر تقفيل اليومية ومبيعات اليوم.
+                    </div>
+                  </Notice>
+
                   <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-                    <Card><div className="text-xs text-slate-500 font-black">المخزون</div><div className="text-2xl font-black">{formatQty(totalStock)}</div></Card>
-                    <Card><div className="text-xs text-slate-500 font-black">{filterDate ? `مبيعات (${filterDate})` : "مبيعات (اختر فلتر)"}</div><div className="text-2xl font-black">{formatMoney(kpis.todaySales)} ج</div></Card>
-                    <Card><div className="text-xs text-slate-500 font-black">ديون لنا (عند العملاء)</div><div className="text-2xl font-black">{formatMoney(kpis.owedFromCustomers)} ج</div></Card>
-                    <Card><div className="text-xs text-slate-500 font-black">ديون علينا (للمعامل)</div><div className="text-2xl font-black">{formatMoney(kpis.owedToSuppliers)} ج</div></Card>
+                    <Card>
+                      <div className="text-xs text-slate-500 font-black">المخزون</div>
+                      <div className="text-2xl font-black">{formatQty(totalStock)}</div>
+                      <div className="text-[11px] text-slate-400 font-bold mt-1">إجمالي كل الأصناف</div>
+                    </Card>
+
+                    <Card>
+                      <div className="text-xs text-slate-500 font-black">{filterDate ? `مبيعات (${filterDate})` : "مبيعات اليوم (اختر فلتر)"}</div>
+                      <div className="text-2xl font-black">{formatMoney(kpis.todaySales)} ج</div>
+                      <div className="text-[11px] text-slate-400 font-bold mt-1">إجمالي الفواتير</div>
+                    </Card>
+
+                    <Card>
+                      <div className="text-xs text-slate-500 font-black">{filterDate ? `مصروفات (${filterDate})` : "مصروفات اليوم (اختر فلتر)"}</div>
+                      <div className="text-2xl font-black text-[color:var(--danger)]">{formatMoney(kpis.todayExpenses)} ج</div>
+                      <div className="text-[11px] text-slate-400 font-bold mt-1">بنزين/كارتة/..</div>
+                    </Card>
+
+                    <Card>
+                      <div className="text-xs text-slate-500 font-black">ديون لنا (عند العملاء)</div>
+                      <div className="text-2xl font-black text-amber-700">{formatMoney(kpis.owedFromCustomers)} ج</div>
+                      <div className="text-[11px] text-slate-400 font-bold mt-1">إجمالي الآجل</div>
+                    </Card>
                   </div>
-                  <Card><div className="text-xs text-slate-500 font-black">ربح تقديري (كل الفترة)</div><div className="text-3xl font-black text-emerald-700">{formatMoney(kpis.estProfit)} ج</div></Card>
+
+                  <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
+                    <Card className="xl:col-span-2">
+                      <div className="text-xs text-slate-500 font-black">ربح تقديري (كل الفترة)</div>
+                      <div className="text-3xl font-black text-emerald-700">{formatMoney(kpis.estProfit)} ج</div>
+                      <div className="text-[11px] text-slate-400 font-bold mt-2">
+                        * تقديري = (إجمالي المبيعات - متوسط تكلفة الشراء - المصروفات)
+                      </div>
+                    </Card>
+                    <Card>
+                      <div className="text-xs text-slate-500 font-black">ديون علينا (للمعامل)</div>
+                      <div className="text-3xl font-black text-[color:var(--danger)]">{formatMoney(kpis.owedToSuppliers)} ج</div>
+                      <div className="text-[11px] text-slate-400 font-bold mt-2">مبالغ غير مسددة</div>
+                    </Card>
+                  </div>
                 </div>
               )}
 
+              {/* Products (NEW UI) */}
+              {activeTab==="products" && (
+                <div className="space-y-4">
+                  {!isAdmin && (
+                    <Card><Notice variant="warn"><div className="font-black">ممنوع الدخول لهذه الشاشة. صلاحياتك: إدخال بيانات فقط.</div></Notice></Card>
+                  )}
+
+                  {isAdmin && (
+                    <>
+                      <Card>
+                        <SectionTitle icon="tag" title="إدارة المنتجات" desc="أضف/نظّم أصنافك (كتاكيت / علف / مجمدات...) علشان الشغل يبقى مرتب." />
+                        {err.products && <Notice variant="warn"><div className="font-black">{err.products}</div></Notice>}
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                          <Field label="التصنيف" hint="مثال: كتاكيت / أعلاف / مجمدات">
+                            <Input value={productForm.category} onChange={(e)=>setProductForm(f=>({...f,category:e.target.value}))} placeholder="كتاكيت" />
+                          </Field>
+                          <Field label="اسم المنتج">
+                            <Input value={productForm.name} onChange={(e)=>setProductForm(f=>({...f,name:e.target.value}))} placeholder="كتكوت أبيض" />
+                          </Field>
+                          <Field label="الوحدة" hint="كتكوت / كرتونة / كجم">
+                            <Input value={productForm.unit} onChange={(e)=>setProductForm(f=>({...f,unit:e.target.value}))} placeholder="كتكوت" />
+                          </Field>
+                          <div className="flex items-end">
+                            <Button onClick={addProduct}><Icon name="plus" size={18}/> إضافة</Button>
+                          </div>
+                        </div>
+                      </Card>
+
+                      <Card>
+                        <SectionTitle icon="package" title="قائمة المنتجات" desc="اسحب يمين/شمال على الموبايل لعرض الجدول كامل." />
+                        <div className="table-wrap mt-3 overflow-auto">
+                          <table className="min-w-[980px] w-full text-right">
+                            <thead className="bg-slate-50 text-slate-600 text-sm">
+                              <tr>
+                                <th className="p-3">حذف</th>
+                                <th className="p-3">التصنيف</th>
+                                <th className="p-3">المنتج</th>
+                                <th className="p-3">الوحدة</th>
+                                <th className="p-3">المخزون الحالي</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {products.map(p => (
+                                <tr key={p.id} className="border-t border-slate-100">
+                                  <td className="p-3">
+                                    <SmallBtn className="text-red-600" onClick={()=>removeProduct(p.id)} title="حذف">
+                                      <Icon name="trash" size={18}/>
+                                    </SmallBtn>
+                                  </td>
+                                  <td className="p-3 font-black text-slate-900">{p.category}</td>
+                                  <td className="p-3 font-bold">{p.name}</td>
+                                  <td className="p-3 font-black text-slate-700">{p.unit}</td>
+                                  <td className="p-3 font-black">
+                                    {formatQty(stockByProduct[p.name]||0)} <span className="text-slate-400 text-xs">{p.unit}</span>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </Card>
+                    </>
+                  )}
+                </div>
+              )}
+
+              {/* Purchases */}
               {activeTab==="purchases" && (
                 <div className="space-y-4">
                   <Card>
-                    <div className="font-black text-slate-900 flex items-center gap-2"><Icon name="cart" size={18}/> تسجيل استلامة</div>
+                    <SectionTitle icon="cart" title="تسجيل استلامة" desc="سجل استلامات المعامل + الهالك + المدفوع (لو مدير)." />
                     {err.purchase && <Notice variant="warn"><div className="font-black">{err.purchase}</div></Notice>}
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                       <Field label="التاريخ"><Input type="date" value={purchaseForm.date} onChange={(e)=>setPurchaseForm(f=>({...f,date:e.target.value}))}/></Field>
                       <Field label="المعمل">
                         <Select value={purchaseForm.supplier} onChange={(e)=>setPurchaseForm(f=>({...f,supplier:e.target.value}))}>
@@ -683,17 +1010,14 @@
                   </Card>
 
                   <Card>
-                    <div className="flex items-center justify-between gap-3 flex-wrap">
-                      <div className="font-black text-slate-900">الاستلامات</div>
-                      <div className="text-xs text-slate-500 font-bold">اسحب يمين/شمال على الموبايل</div>
-                    </div>
-                    <div className="mt-3 overflow-auto">
-                      <table className="min-w-[980px] w-full text-right">
+                    <SectionTitle icon="cart" title="سجل الاستلامات" desc="اسحب يمين/شمال على الموبايل." />
+                    <div className="table-wrap mt-3 overflow-auto">
+                      <table className="min-w-[1020px] w-full text-right">
                         <thead className="bg-slate-50 text-slate-600 text-sm">
                           <tr>
                             <th className="p-3">حذف</th><th className="p-3">التاريخ</th><th className="p-3">المعمل</th><th className="p-3">المنتج</th>
                             <th className="p-3">الكمية</th><th className="p-3">هالك</th><th className="p-3">سعر</th><th className="p-3">إجمالي</th>
-                            {currentUser.role==="admin" ? (<><th className="p-3">مدفوع</th><th className="p-3">متبقي علينا</th></>) : null}
+                            {isAdmin ? (<><th className="p-3">مدفوع</th><th className="p-3">متبقي علينا</th></>) : null}
                             <th className="p-3">سجّلها</th>
                           </tr>
                         </thead>
@@ -705,10 +1029,10 @@
                               <td className="p-3 font-black">{p.supplier}</td>
                               <td className="p-3 font-bold">{p.product}</td>
                               <td className="p-3 font-bold">{formatQty(p.quantity)} <span className="text-slate-400 text-xs">{productUnit(p.product)}</span></td>
-                              <td className="p-3 font-black text-orange-700">{formatQty(p.loss)}</td>
+                              <td className="p-3 font-black text-amber-700">{formatQty(p.loss)}</td>
                               <td className="p-3 font-bold">{formatMoney(p.buyPrice)} ج</td>
                               <td className="p-3 font-black">{formatMoney(p.total)} ج</td>
-                              {currentUser.role==="admin" ? (
+                              {isAdmin ? (
                                 <>
                                   <td className="p-3 font-black text-emerald-700">{formatMoney(p.paid)} ج</td>
                                   <td className="p-3 font-black text-red-700">{formatMoney(p.debt)} ج</td>
@@ -724,13 +1048,14 @@
                 </div>
               )}
 
+              {/* Sales */}
               {activeTab==="sales" && (
                 <div className="space-y-4">
                   <Card>
-                    <div className="font-black text-slate-900 flex items-center gap-2"><Icon name="truck" size={18}/> تسجيل بيع</div>
+                    <SectionTitle icon="truck" title="تسجيل بيع" desc="يتأكد تلقائيًا من المخزون قبل الحفظ." />
                     {err.sale && <Notice variant="warn"><div className="font-black">{err.sale}</div></Notice>}
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                       <Field label="التاريخ"><Input type="date" value={saleForm.date} onChange={(e)=>setSaleForm(f=>({...f,date:e.target.value}))}/></Field>
                       <Field label="العميل">
                         <Select value={saleForm.customer} onChange={(e)=>setSaleForm(f=>({...f,customer:e.target.value}))}>
@@ -759,17 +1084,14 @@
                   </Card>
 
                   <Card>
-                    <div className="flex items-center justify-between gap-3 flex-wrap">
-                      <div className="font-black text-slate-900">المبيعات</div>
-                      <div className="text-xs text-slate-500 font-bold">اسحب يمين/شمال على الموبايل</div>
-                    </div>
-                    <div className="mt-3 overflow-auto">
-                      <table className="min-w-[980px] w-full text-right">
+                    <SectionTitle icon="truck" title="سجل المبيعات" desc="اسحب يمين/شمال على الموبايل." />
+                    <div className="table-wrap mt-3 overflow-auto">
+                      <table className="min-w-[1020px] w-full text-right">
                         <thead className="bg-slate-50 text-slate-600 text-sm">
                           <tr>
                             <th className="p-3">حذف</th><th className="p-3">التاريخ</th><th className="p-3">العميل</th><th className="p-3">الموزع</th><th className="p-3">المنتج</th>
                             <th className="p-3">الكمية</th><th className="p-3">سعر</th><th className="p-3">إجمالي</th><th className="p-3">محصل</th>
-                            {currentUser.role==="admin" ? <th className="p-3">آجل</th> : null}
+                            {isAdmin ? <th className="p-3">آجل</th> : null}
                             <th className="p-3">سجّلها</th>
                           </tr>
                         </thead>
@@ -785,7 +1107,7 @@
                               <td className="p-3 font-bold">{formatMoney(s.sellPrice)} ج</td>
                               <td className="p-3 font-black">{formatMoney(s.total)} ج</td>
                               <td className="p-3 font-black text-emerald-700">{formatMoney(s.paid)} ج</td>
-                              {currentUser.role==="admin" ? <td className="p-3 font-black text-orange-700">{formatMoney(s.debt)} ج</td> : null}
+                              {isAdmin ? <td className="p-3 font-black text-amber-700">{formatMoney(s.debt)} ج</td> : null}
                               <td className="p-3 text-slate-500 font-black">{s.createdBy || "-"}</td>
                             </tr>
                           ))}
@@ -796,13 +1118,14 @@
                 </div>
               )}
 
+              {/* Expenses */}
               {activeTab==="expenses" && (
                 <div className="space-y-4">
                   <Card>
-                    <div className="font-black text-slate-900 flex items-center gap-2"><Icon name="receipt" size={18}/> تسجيل مصروف</div>
+                    <SectionTitle icon="receipt" title="تسجيل مصروف" desc="مصروفات يومية + ربط اختياري بالموزع." />
                     {err.expense && <Notice variant="warn"><div className="font-black">{err.expense}</div></Notice>}
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                       <Field label="التاريخ"><Input type="date" value={expenseForm.date} onChange={(e)=>setExpenseForm(f=>({...f,date:e.target.value}))}/></Field>
                       <Field label="نوع المصروف"><Input value={expenseForm.category} onChange={(e)=>setExpenseForm(f=>({...f,category:e.target.value}))} placeholder="بنزين/كارتة..."/></Field>
                       <Field label="الموزع (اختياري)">
@@ -813,23 +1136,60 @@
                       </Field>
                       <Field label="المبلغ"><Input type="number" step="0.01" value={expenseForm.amount} onChange={(e)=>setExpenseForm(f=>({...f,amount:e.target.value}))} placeholder="400"/></Field>
                       <Field label="ملاحظات (اختياري)" className="lg:col-span-3"><Input value={expenseForm.notes} onChange={(e)=>setExpenseForm(f=>({...f,notes:e.target.value}))} placeholder="اختياري"/></Field>
-                      <div className="lg:col-span-1">
+                      <div className="lg:col-span-1 flex items-end">
                         <Button variant="danger" onClick={addExpense}><Icon name="plus" size={18}/> حفظ المصروف</Button>
                       </div>
+                    </div>
+                  </Card>
+
+                  <Card>
+                    <SectionTitle icon="wallet" title="سجل المصروفات" desc="اسحب يمين/شمال على الموبايل." />
+                    <div className="table-wrap mt-3 overflow-auto">
+                      <table className="min-w-[980px] w-full text-right">
+                        <thead className="bg-slate-50 text-slate-600 text-sm">
+                          <tr>
+                            <th className="p-3">حذف</th>
+                            <th className="p-3">التاريخ</th>
+                            <th className="p-3">النوع</th>
+                            <th className="p-3">الموزع</th>
+                            <th className="p-3">المبلغ</th>
+                            <th className="p-3">ملاحظات</th>
+                            <th className="p-3">سجّلها</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {expenses.map(e => (
+                            <tr key={e.id} className="border-t border-slate-100">
+                              <td className="p-3">
+                                <SmallBtn className="text-red-600" onClick={()=>removeRow("expense", e.id)}>
+                                  <Icon name="trash" size={18}/>
+                                </SmallBtn>
+                              </td>
+                              <td className="p-3 font-bold">{e.date}</td>
+                              <td className="p-3 font-black">{e.category}</td>
+                              <td className="p-3 font-bold">{e.driver || "-"}</td>
+                              <td className="p-3 font-black text-red-700">{formatMoney(e.amount)} ج</td>
+                              <td className="p-3 text-slate-600 font-bold">{e.notes || "-"}</td>
+                              <td className="p-3 text-slate-500 font-black">{e.createdBy || "-"}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
                   </Card>
                 </div>
               )}
 
+              {/* Receipts */}
               {activeTab==="receipts" && (
                 <div className="space-y-4">
                   <Notice variant="info"><div className="font-black">اعمل إيصال لـ Alamal Group باختيار التاريخ + العميل.</div></Notice>
 
                   <Card>
-                    <div className="font-black text-slate-900 flex items-center gap-2"><Icon name="printer" size={18}/> إصدار إيصال</div>
+                    <SectionTitle icon="printer" title="إصدار إيصال" desc="يجمّع كل المبيعات لنفس العميل (وممكن فلترة موزع) ويطلع طباعة جاهزة." />
                     {receiptErr && <Notice variant="warn"><div className="font-black">{receiptErr}</div></Notice>}
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                       <Field label="التاريخ"><Input type="date" value={receiptDate} onChange={(e)=>setReceiptDate(e.target.value)} /></Field>
                       <Field label="العميل">
                         <Select value={receiptCustomer} onChange={(e)=>setReceiptCustomer(e.target.value)}>
@@ -850,25 +1210,151 @@
                         <Button variant="secondary" onClick={()=>{setReceiptPreview(null);setReceiptErr("");}}>مسح</Button>
                       </div>
                     </div>
+
+                    {receiptPreview && (
+                      <div className="mt-4 bg-slate-50 border border-slate-200 rounded-2xl p-4">
+                        <div className="flex items-center justify-between flex-wrap gap-2">
+                          <div className="font-black text-slate-900">معاينة سريعة</div>
+                          <div className="text-xs font-black text-slate-600">
+                            إجمالي: {receiptPreview.totals.total} ج — محصل: {receiptPreview.totals.paid} ج — آجل: {receiptPreview.totals.debt} ج
+                          </div>
+                        </div>
+                        <div className="text-xs text-slate-500 font-bold mt-1">
+                          العميل: {receiptPreview.customer} — الموزع: {receiptPreview.driver} — التاريخ: {receiptPreview.date}
+                        </div>
+                      </div>
+                    )}
                   </Card>
                 </div>
               )}
 
+              {/* Settlements (NEW UI) */}
+              {activeTab==="settlements" && (
+                <div className="space-y-4">
+                  {!isAdmin && (
+                    <Card><Notice variant="warn"><div className="font-black">ممنوع الدخول لهذه الشاشة. صلاحياتك: إدخال بيانات فقط.</div></Notice></Card>
+                  )}
+
+                  {isAdmin && (
+                    <>
+                      {!filterDate ? (
+                        <Card>
+                          <Notice variant="warn">
+                            <div className="font-black">لازم تختار تاريخ من فوق علشان تقفيل اليومية يظهر.</div>
+                          </Notice>
+                        </Card>
+                      ) : (
+                        <>
+                          <Card>
+                            <SectionTitle icon="users" title={`تقفيل اليومية — ${filterDate}`} desc="ملخص لكل موزع: محصل - مصروفات - صافي، + إجمالي المبيعات والآجل." />
+                            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+                              <div className="bg-white border border-slate-200 rounded-2xl p-4">
+                                <div className="text-xs text-slate-500 font-black">إجمالي مبيعات اليوم</div>
+                                <div className="text-2xl font-black">{formatMoney(kpis.todaySales)} ج</div>
+                              </div>
+                              <div className="bg-white border border-slate-200 rounded-2xl p-4">
+                                <div className="text-xs text-slate-500 font-black">مصروفات اليوم</div>
+                                <div className="text-2xl font-black text-red-700">{formatMoney(kpis.todayExpenses)} ج</div>
+                              </div>
+                              <div className="bg-white border border-slate-200 rounded-2xl p-4">
+                                <div className="text-xs text-slate-500 font-black">صافي اليوم (تقديري)</div>
+                                <div className="text-2xl font-black text-emerald-700">{formatMoney(kpis.todaySales - kpis.todayExpenses)} ج</div>
+                              </div>
+                              <div className="bg-white border border-slate-200 rounded-2xl p-4">
+                                <div className="text-xs text-slate-500 font-black">آجل اليوم (ضمن مبيعات اليوم)</div>
+                                <div className="text-2xl font-black text-amber-700">
+                                  {formatMoney(
+                                    sales.filter(s=>s.date===filterDate).reduce((sum,s)=>sum+toNumber(s.debt),0)
+                                  )} ج
+                                </div>
+                              </div>
+                            </div>
+                          </Card>
+
+                          <Card>
+                            <SectionTitle icon="wallet" title="تفصيل حسب الموزع" desc="ده اللي بتسلمه/تستلمه من كل موزع بعد خصم مصروفاته." />
+                            <div className="table-wrap mt-3 overflow-auto">
+                              <table className="min-w-[980px] w-full text-right">
+                                <thead className="bg-slate-50 text-slate-600 text-sm">
+                                  <tr>
+                                    <th className="p-3">الموزع</th>
+                                    <th className="p-3">عدد العمليات</th>
+                                    <th className="p-3">إجمالي بيع</th>
+                                    <th className="p-3">محصل</th>
+                                    <th className="p-3">مصروفات</th>
+                                    <th className="p-3">آجل</th>
+                                    <th className="p-3">صافي (محصل - مصروفات)</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {settlements.length===0 ? (
+                                    <tr className="border-t border-slate-100">
+                                      <td className="p-4 font-bold text-slate-600" colSpan="7">لا توجد بيانات لهذا اليوم.</td>
+                                    </tr>
+                                  ) : settlements.map(d => (
+                                    <tr key={d.name} className="border-t border-slate-100">
+                                      <td className="p-3 font-black">{d.name}</td>
+                                      <td className="p-3 font-bold">{formatQty(d.count)}</td>
+                                      <td className="p-3 font-black">{formatMoney(d.total)} ج</td>
+                                      <td className="p-3 font-black text-emerald-700">{formatMoney(d.cash)} ج</td>
+                                      <td className="p-3 font-black text-red-700">{formatMoney(d.expenses)} ج</td>
+                                      <td className="p-3 font-black text-amber-700">{formatMoney(d.debt)} ج</td>
+                                      <td className={"p-3 font-black " + (d.net>=0 ? "text-emerald-700" : "text-red-700")}>
+                                        {formatMoney(d.net)} ج
+                                      </td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+
+                            <div className="mt-4 text-[11px] text-slate-400 font-bold">
+                              ملاحظة: المصروفات لازم تكون مسجلة على نفس التاريخ وتكون مختارة عليها اسم الموزع علشان تتحسب في التقفيل.
+                            </div>
+                          </Card>
+                        </>
+                      )}
+                    </>
+                  )}
+                </div>
+              )}
+
+              {/* Settings */}
               {activeTab==="settings" && (
                 <div className="space-y-4">
                   <Card>
-                    <div className="font-black text-slate-900 flex items-center gap-2"><Icon name="settings" size={18}/> الإعدادات</div>
+                    <SectionTitle icon="settings" title="الإعدادات" desc="هوية الشركة + صلاحيات الموظفين + تنبيه الأمان." />
                     <Notice variant="info">
                       <div className="font-black">
                         ✅ الموظف: <span className="underline">علي عبدالله</span> (username: <b>ali</b>) صلاحياته: <b>إدخال بيانات فقط</b>.
-                        <div className="text-xs text-blue-900/70 font-bold mt-1">
+                        <div className="text-xs text-emerald-900/70 font-bold mt-1">
                           تنبيه: ده نظام LocalStorage (بدون سيرفر). للأمان الحقيقي نحتاج Back-end + حسابات حقيقية.
                         </div>
                       </div>
                     </Notice>
 
-                    {currentUser.role==="admin" && (
-                      <div className="mt-4">
+                    {/* Company branding */}
+                    <div className="mt-4">
+                      <h4 className="font-black text-slate-900 mb-2">بيانات الشركة (تظهر في الإيصالات)</h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+                        <Field label="اسم الشركة">
+                          <Input value={company.name} onChange={(e)=>updateCompanyField("name", e.target.value)} placeholder="برو تشيكس" />
+                        </Field>
+                        <Field label="اختصار (للوجو)">
+                          <Input value={company.short} onChange={(e)=>updateCompanyField("short", e.target.value)} placeholder="PC" />
+                        </Field>
+                        <Field label="تليفون (اختياري)">
+                          <Input value={company.phone} onChange={(e)=>updateCompanyField("phone", e.target.value)} placeholder="01xxxxxxxxx" />
+                        </Field>
+                        <Field label="عنوان (اختياري)">
+                          <Input value={company.address} onChange={(e)=>updateCompanyField("address", e.target.value)} placeholder="المنطقة/المحافظة" />
+                        </Field>
+                      </div>
+                    </div>
+
+                    {/* PIN change */}
+                    {isAdmin && (
+                      <div className="mt-6">
                         <h4 className="font-black text-slate-900 mb-2">تغيير PIN</h4>
                         {err.admin && <Notice variant="warn"><div className="font-black">{err.admin}</div></Notice>}
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
@@ -886,7 +1372,8 @@
                 </div>
               )}
 
-              {currentUser.role!=="admin" && ["dashboard","products","settlements"].includes(activeTab) && (
+              {/* Guard (extra safety) */}
+              {!isAdmin && ["dashboard","products","settlements"].includes(activeTab) && (
                 <Card><Notice variant="warn"><div className="font-black">ممنوع الدخول لهذه الشاشة. صلاحياتك: إدخال بيانات فقط.</div></Notice></Card>
               )}
             </main>
