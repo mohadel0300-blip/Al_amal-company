@@ -1,8 +1,10 @@
+أكيد — ده الكود كامل (انسخه والصقه في ملف اسمه index.html وشغّله مباشرة):
+
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>برو تشيكس | نظام إدارة التوزيع</title>
 
   <!-- Arabic Font -->
@@ -15,10 +17,10 @@
 
   <style>
     html, body { font-family: Cairo, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
-    /* Remove number spinners (optional) */
     input[type=number]::-webkit-outer-spin-button,
     input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
     input[type=number] { -moz-appearance: textfield; }
+    button, a, input, select { touch-action: manipulation; }
   </style>
 </head>
 
@@ -36,23 +38,25 @@
     const { useEffect, useMemo, useState } = React;
 
     /***********************
-     * Small Icon Set (inline SVG)
+     * Inline SVG Icons
      ***********************/
     const ICONS = {
+      menu: (p) => (<svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/></svg>),
+      x: (p) => (<svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>),
+      logout: (p) => (<svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>),
       dashboard: (p) => (<svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="5" rx="2"/><rect x="13" y="10" width="8" height="11" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/></svg>),
       cart: (p) => (<svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="9" cy="20" r="1"/><circle cx="17" cy="20" r="1"/><path d="M3 4h2l2.2 10.5a2 2 0 0 0 2 1.5h7.6a2 2 0 0 0 2-1.6L21 7H6"/></svg>),
       truck: (p) => (<svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 7h11v10H3z"/><path d="M14 10h4l3 3v4h-7z"/><circle cx="7" cy="19" r="1.5"/><circle cx="18" cy="19" r="1.5"/></svg>),
       users: (p) => (<svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="3"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a3 3 0 0 1 0 5.74"/></svg>),
       receipt: (p) => (<svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 2h12v20l-2-1-2 1-2-1-2 1-2-1-2 1z"/><path d="M9 6h6"/><path d="M9 10h6"/><path d="M9 14h6"/></svg>),
-      alert: (p) => (<svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10.3 3.1 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.1a2 2 0 0 0-3.4 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>),
       plus: (p) => (<svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 5v14"/><path d="M5 12h14"/></svg>),
       package: (p) => (<svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 8l-9 5-9-5"/><path d="M3 8V16l9 5 9-5V8"/><path d="M12 13v8"/></svg>),
       wallet: (p) => (<svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 7h18v14H3z"/><path d="M3 7a2 2 0 0 1 2-2h14v2H5a2 2 0 0 0-2 2z"/><path d="M17 13h4"/><circle cx="17" cy="13" r="0.5" fill="currentColor"/></svg>),
       trash: (p) => (<svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 16H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>),
-      building: (p) => (<svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 21V3h12v18"/><path d="M15 9h6v12"/><path d="M7 7h4"/><path d="M7 11h4"/><path d="M7 15h4"/></svg>),
-      user: (p) => (<svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="7" r="3"/><path d="M5.5 21a6.5 6.5 0 0 1 13 0"/></svg>),
-      banknote: (p) => (<svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 7h20v10H2z"/><path d="M6 7a3 3 0 0 1-3 3"/><path d="M18 7a3 3 0 0 0 3 3"/><path d="M6 17a3 3 0 0 0-3-3"/><path d="M18 17a3 3 0 0 1 3-3"/><circle cx="12" cy="12" r="2.5"/></svg>),
       tag: (p) => (<svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20.59 13.41 11 3H4v7l9.59 9.59a2 2 0 0 0 2.82 0l4.18-4.18a2 2 0 0 0 0-2.82z"/><circle cx="7.5" cy="7.5" r="1"/></svg>),
+      printer: (p) => (<svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9V4h12v5"/><path d="M6 18h12v2H6z"/><path d="M6 14h12v4H6z"/><path d="M6 13H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-2"/></svg>),
+      lock: (p) => (<svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>),
+      settings: (p) => (<svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.22 4.22l1.42 1.42"/><path d="M18.36 18.36l1.42 1.42"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.22 19.78l1.42-1.42"/><path d="M18.36 5.64l1.42-1.42"/><circle cx="12" cy="12" r="3"/></svg>),
     };
 
     function Icon({ name, size = 20, className = "" }) {
@@ -61,89 +65,163 @@
       return <Comp width={size} height={size} className={className} />;
     }
 
-    /***********************
-     * Utils
-     ***********************/
-    function toNumber(v) {
-      const n = Number(v);
-      return Number.isFinite(n) ? n : 0;
+    function toNumber(v){ const n = Number(v); return Number.isFinite(n) ? n : 0; }
+    function formatMoney(n){ return toNumber(n).toLocaleString("ar-EG"); }
+    function formatQty(n){ return toNumber(n).toLocaleString("ar-EG"); }
+    function computeDebt(total, paid){ return Math.max(toNumber(total) - toNumber(paid), 0); }
+    function escapeHtml(str){
+      return String(str ?? "")
+        .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;").replaceAll("'","&#039;");
     }
-    function formatMoney(n) {
-      return toNumber(n).toLocaleString("ar-EG");
-    }
-    function formatQty(n) {
-      return toNumber(n).toLocaleString("ar-EG");
-    }
-    function computeDebt(total, paid) {
-      const t = toNumber(total);
-      const p = toNumber(paid);
-      return Math.max(t - p, 0);
-    }
-    function monthKey(dateStr) {
-      return (dateStr || "").slice(0, 7);
-    }
-
-    function useLocalStorageState(key, initialValue) {
+    function useLocalStorageState(key, initialValue){
       const [state, setState] = useState(() => {
-        try {
-          const raw = localStorage.getItem(key);
-          return raw ? JSON.parse(raw) : initialValue;
-        } catch {
-          return initialValue;
-        }
+        try { const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : initialValue; }
+        catch { return initialValue; }
       });
-      useEffect(() => {
-        try { localStorage.setItem(key, JSON.stringify(state)); } catch {}
-      }, [key, state]);
+      useEffect(() => { try { localStorage.setItem(key, JSON.stringify(state)); } catch {} }, [key, state]);
       return [state, setState];
     }
 
     /***********************
-     * UI Components
+     * Auth + Roles
+     ***********************/
+    const DEFAULT_USERS = [
+      { id: 1, username: "admin", displayName: "المدير", pin: "1234", role: "admin" },
+      { id: 2, username: "ali", displayName: "علي عبدالله", pin: "0000", role: "clerk" },
+    ];
+    const ROLE_TABS = {
+      admin: ["dashboard","products","purchases","sales","receipts","settlements","expenses","settings"],
+      clerk: ["purchases","sales","expenses","receipts","settings"],
+    };
+    function canSeeTab(role, tabId){
+      const allowed = ROLE_TABS[role] || [];
+      return allowed.includes(tabId);
+    }
+
+    /***********************
+     * Printing
+     ***********************/
+    function printReceiptHTML({ title, companyName, date, customer, driver, items, totals, notes }) {
+      const rowsHtml = items.map((it, idx) => `
+        <tr>
+          <td>${idx + 1}</td>
+          <td>${escapeHtml(it.product)}</td>
+          <td>${escapeHtml(it.unit || "")}</td>
+          <td>${escapeHtml(it.quantity)}</td>
+          <td>${escapeHtml(it.price)}</td>
+          <td><b>${escapeHtml(it.total)}</b></td>
+        </tr>
+      `).join("");
+
+      const html = `<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>${escapeHtml(title)}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *{box-sizing:border-box}
+    body{font-family:Cairo,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;margin:0;background:#fff;color:#0f172a}
+    .wrap{max-width:820px;margin:24px auto;padding:24px;border:1px solid #e2e8f0;border-radius:16px}
+    .top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;border-bottom:1px solid #e2e8f0;padding-bottom:16px}
+    .brand h1{margin:0;font-size:22px}
+    .brand p{margin:6px 0 0;color:#64748b;font-weight:700}
+    .meta{min-width:260px}
+    .meta .box{background:#f8fafc;border:1px solid #e2e8f0;padding:12px;border-radius:12px}
+    .meta .row{display:flex;justify-content:space-between;gap:10px;margin:6px 0}
+    .meta .k{color:#64748b;font-weight:800}
+    .meta .v{font-weight:900}
+    h2{margin:18px 0 12px;font-size:18px}
+    table{width:100%;border-collapse:collapse;margin-top:10px}
+    th,td{border:1px solid #e2e8f0;padding:10px;text-align:right}
+    th{background:#f1f5f9;color:#334155;font-weight:900}
+    .totals{margin-top:16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+    .tbox{background:#f8fafc;border:1px solid #e2e8f0;padding:12px;border-radius:12px}
+    .tbox .k{color:#64748b;font-weight:900;font-size:12px}
+    .tbox .v{font-weight:900;font-size:16px;margin-top:4px}
+    .sign{margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .line{height:44px;border-bottom:2px dashed #cbd5e1}
+    .foot{margin-top:14px;color:#64748b;font-weight:800;font-size:12px}
+    @media print {
+      body{margin:0}
+      .wrap{border:none;margin:0;max-width:none;border-radius:0}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">
+        <h1>${escapeHtml(companyName || "برو تشيكس")}</h1>
+        <p>${escapeHtml(title)}</p>
+      </div>
+      <div class="meta">
+        <div class="box">
+          <div class="row"><span class="k">التاريخ</span><span class="v">${escapeHtml(date || "—")}</span></div>
+          <div class="row"><span class="k">العميل</span><span class="v">${escapeHtml(customer || "—")}</span></div>
+          <div class="row"><span class="k">الموزع</span><span class="v">${escapeHtml(driver || "—")}</span></div>
+        </div>
+      </div>
+    </div>
+
+    <h2>تفاصيل الأصناف</h2>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:46px">#</th>
+          <th>المنتج</th>
+          <th style="width:90px">الوحدة</th>
+          <th style="width:110px">الكمية</th>
+          <th style="width:120px">السعر</th>
+          <th style="width:140px">الإجمالي</th>
+        </tr>
+      </thead>
+      <tbody>${rowsHtml}</tbody>
+    </table>
+
+    <div class="totals">
+      <div class="tbox"><div class="k">إجمالي الفاتورة</div><div class="v">${escapeHtml(totals.total || "0")} ج</div></div>
+      <div class="tbox"><div class="k">المحصل</div><div class="v">${escapeHtml(totals.paid || "0")} ج</div></div>
+      <div class="tbox"><div class="k">المتبقي (آجل)</div><div class="v">${escapeHtml(totals.debt || "0")} ج</div></div>
+    </div>
+
+    <div class="totals" style="grid-template-columns:1fr">
+      <div class="tbox"><div class="k">ملاحظات</div><div class="v" style="font-size:14px">${escapeHtml(notes || "—")}</div></div>
+    </div>
+
+    <div class="sign">
+      <div>
+        <div class="k" style="color:#64748b;font-weight:900;margin-bottom:8px">توقيع العميل</div>
+        <div class="line"></div>
+      </div>
+      <div>
+        <div class="k" style="color:#64748b;font-weight:900;margin-bottom:8px">توقيع الشركة</div>
+        <div class="line"></div>
+      </div>
+    </div>
+
+    <div class="foot">تم إصدار هذا الإيصال من النظام — للطباعة اضغط Print.</div>
+  </div>
+
+  <script>
+    window.addEventListener('load', () => setTimeout(() => window.print(), 200));
+  </script>
+</body>
+</html>`;
+
+      const w = window.open("", "_blank");
+      if (!w) { alert("المتصفح منع نافذة الطباعة. فعل Pop-ups أو جرّب Chrome."); return; }
+      w.document.open(); w.document.write(html); w.document.close(); w.focus();
+    }
+
+    /***********************
+     * UI helpers
      ***********************/
     const Card = ({ children, className = "" }) => (
-      <div className={"bg-white p-6 rounded-2xl shadow-sm border border-slate-100 " + className}>
-        {children}
-      </div>
+      <div className={"bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-100 " + className}>{children}</div>
     );
-
-    const TableWrap = ({ children }) => (
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-        {children}
-      </div>
-    );
-
-    const Field = ({ label, children, className = "" }) => (
-      <div className={"flex flex-col gap-1 " + className}>
-        <label className="text-xs text-slate-500 font-black">{label}</label>
-        {children}
-      </div>
-    );
-
-    const Input = (props) => (
-      <input
-        {...props}
-        className={"border border-slate-200 bg-white p-2 rounded-lg outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-300 transition " + (props.className || "")}
-      />
-    );
-
-    const Select = (props) => (
-      <select
-        {...props}
-        className={"border border-slate-200 bg-white p-2 rounded-lg outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-300 transition " + (props.className || "")}
-      />
-    );
-
-    const Button = ({ variant = "primary", className = "", children, ...props }) => {
-      const base = "px-4 py-2 rounded-lg font-black transition inline-flex items-center justify-center gap-2";
-      const styles =
-        variant === "primary" ? "bg-blue-600 text-white hover:bg-blue-700" :
-        variant === "success" ? "bg-emerald-600 text-white hover:bg-emerald-700" :
-        variant === "danger" ? "bg-red-500 text-white hover:bg-red-600" :
-        "bg-slate-100 text-slate-800 hover:bg-slate-200";
-      return <button {...props} className={`${base} ${styles} ${className}`}>{children}</button>;
-    };
-
     const Notice = ({ variant="info", children }) => {
       const styles =
         variant === "info" ? "bg-blue-50 border-blue-200 text-blue-900" :
@@ -151,1093 +229,667 @@
         "bg-red-50 border-red-200 text-red-900";
       return <div className={`border p-4 rounded-xl ${styles}`}>{children}</div>;
     };
-
-    const DashboardCard = ({ title, value, iconName, color }) => (
-      <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
-        <div className={`${color} text-white p-4 rounded-xl`}>
-          <Icon name={iconName} size={24} />
-        </div>
-        <div>
-          <p className="text-slate-500 text-sm font-black mb-1">{title}</p>
-          <p className="text-2xl font-black text-slate-800">{value}</p>
-        </div>
+    const Field = ({ label, children, className="" }) => (
+      <div className={"flex flex-col gap-1 " + className}>
+        <label className="text-xs text-slate-500 font-black">{label}</label>
+        {children}
       </div>
     );
-
-    const SidebarItem = ({ iconName, label, id, activeTab, setActiveTab }) => (
-      <button
-        onClick={() => setActiveTab(id)}
-        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
-          activeTab === id ? "bg-blue-600 text-white" : "text-slate-600 hover:bg-blue-50 hover:text-blue-600"
-        }`}
-      >
-        <Icon name={iconName} size={20} />
-        <span className="font-black">{label}</span>
+    const Input = (props) => (
+      <input {...props} className={"border border-slate-200 bg-white p-3 rounded-xl outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-300 transition w-full " + (props.className||"")} />
+    );
+    const Select = (props) => (
+      <select {...props} className={"border border-slate-200 bg-white p-3 rounded-xl outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-300 transition w-full " + (props.className||"")} />
+    );
+    const Button = ({ variant="primary", className="", children, ...props }) => {
+      const base = "px-4 py-3 rounded-xl font-black transition inline-flex items-center justify-center gap-2 w-full sm:w-auto";
+      const styles =
+        variant === "primary" ? "bg-blue-600 text-white hover:bg-blue-700" :
+        variant === "success" ? "bg-emerald-600 text-white hover:bg-emerald-700" :
+        variant === "danger" ? "bg-red-500 text-white hover:bg-red-600" :
+        "bg-slate-100 text-slate-900 hover:bg-slate-200";
+      return <button {...props} className={`${base} ${styles} ${className}`}>{children}</button>;
+    };
+    const SmallBtn = ({ className="", ...props }) => (
+      <button {...props} className={"p-2 rounded-lg hover:bg-slate-100 transition " + className} />
+    );
+    const TabBtn = ({ active, icon, label, onClick }) => (
+      <button onClick={onClick} className={"flex items-center gap-2 px-4 py-3 rounded-xl font-black transition w-full text-right " + (active ? "bg-blue-600 text-white" : "text-slate-700 hover:bg-blue-50 hover:text-blue-700")}>
+        <Icon name={icon} size={18} />
+        <span>{label}</span>
       </button>
     );
 
     /***********************
      * App
      ***********************/
-    function App() {
-      const [activeTab, setActiveTab] = useState("dashboard");
+    function App(){
+      const [menuOpen, setMenuOpen] = useState(false);
 
-      // Filters (user enters manually)
-      const [filterDate, setFilterDate] = useState("");      // YYYY-MM-DD (optional)
-      const [payrollMonth, setPayrollMonth] = useState("");  // YYYY-MM (optional)
+      const [users, setUsers] = useLocalStorageState("pc_users", DEFAULT_USERS);
+      const [currentUser, setCurrentUser] = useLocalStorageState("pc_current_user", null);
+
+      const [loginUsername, setLoginUsername] = useState("");
+      const [loginPin, setLoginPin] = useState("");
+      const [loginErr, setLoginErr] = useState("");
+
+      const [activeTab, setActiveTab] = useState("sales"); // start simple
+      const [filterDate, setFilterDate] = useState(""); // manual filter (admin)
 
       // Master data
       const [products, setProducts] = useLocalStorageState("pc_products", [
-        { id: 1, category: "كتاكيت", name: "كتكوت أبيض", variant: "أبيض", unit: "كتكوت" },
-        { id: 2, category: "كتاكيت", name: "كتكوت ساسو", variant: "ساسو", unit: "كتكوت" },
-        { id: 3, category: "كتاكيت", name: "كتكوت بلدي", variant: "بلدي", unit: "كتكوت" },
+        { id: 1, category:"كتاكيت", name:"كتكوت أبيض", unit:"كتكوت" },
+        { id: 2, category:"كتاكيت", name:"كتكوت ساسو", unit:"كتكوت" },
+        { id: 3, category:"كتاكيت", name:"كتكوت بلدي", unit:"كتكوت" },
       ]);
-
-      const [suppliers, setSuppliers] = useLocalStorageState("pc_suppliers", [
-        { id: 1, name: "معمل الوطنية", phone: "" }
-      ]);
-
+      const [suppliers, setSuppliers] = useLocalStorageState("pc_suppliers", [{ id:1, name:"معمل الوطنية" }]);
       const [customers, setCustomers] = useLocalStorageState("pc_customers", [
-        { id: 1, name: "مزرعة الأمل", phone: "", area: "" },
-        { id: 2, name: "محل طيور البركة", phone: "", area: "" }
+        { id:1, name:"مزرعة الأمل" },
+        { id:2, name:"محل طيور البركة" },
+        { id:3, name:"Alamal Group" },
+      ]);
+      const [drivers, setDrivers] = useLocalStorageState("pc_drivers", [
+        { id:1, name:"سيد محمود" },
+        { id:2, name:"أحمد علي" },
       ]);
 
-      const [employees, setEmployees] = useLocalStorageState("pc_employees", [
-        { id: 1, name: "سيد محمود", role: "سائق/موزع", phone: "", baseSalary: 4500, commissionPer1000: 30, active: true },
-        { id: 2, name: "أحمد علي", role: "سائق/موزع", phone: "", baseSalary: 4000, commissionPer1000: 30, active: true },
-        { id: 3, name: "محاسب", role: "إداري", phone: "", baseSalary: 5000, commissionPer1000: 0, active: true }
-      ]);
-
-      // Operations
+      // Ops
       const [purchases, setPurchases] = useLocalStorageState("pc_purchases", []);
       const [sales, setSales] = useLocalStorageState("pc_sales", []);
       const [expenses, setExpenses] = useLocalStorageState("pc_expenses", []);
-      const [payrollTx, setPayrollTx] = useLocalStorageState("pc_payroll_tx", []);
 
-      // Errors
-      const [errors, setErrors] = useState({ purchase: "", sale: "", expense: "", products: "", people: "", payroll: "" });
+      // Forms
+      const [purchaseForm, setPurchaseForm] = useState({ date:"", supplier:suppliers[0]?.name||"", product:products[0]?.name||"", quantity:"", buyPrice:"", paid:"", loss:"0", notes:"" });
+      const [saleForm, setSaleForm] = useState({ date:"", customer:customers[0]?.name||"", driver:drivers[0]?.name||"", product:products[0]?.name||"", quantity:"", sellPrice:"", paid:"", notes:"" });
+      const [expenseForm, setExpenseForm] = useState({ date:"", category:"", driver:"", amount:"", notes:"" });
 
-      const driversList = useMemo(
-        () => employees.filter(e => e.active && (e.role || "").includes("سائق")).map(e => e.name),
-        [employees]
-      );
+      const [err, setErr] = useState({ purchase:"", sale:"", expense:"", admin:"" });
 
-      const defaultProductName = products[0]?.name || "";
+      const productUnit = (name) => products.find(p => p.name === name)?.unit || "";
 
-      // Forms (DATE is manual - no auto date)
-      const [purchaseForm, setPurchaseForm] = useState({
-        date: "",
-        supplier: suppliers[0]?.name || "",
-        product: defaultProductName,
-        quantity: "",
-        buyPrice: "",
-        paid: "",
-        loss: "0",
-        notes: ""
-      });
-
-      const [saleForm, setSaleForm] = useState({
-        date: "",
-        customer: customers[0]?.name || "",
-        driver: driversList[0] || "",
-        product: defaultProductName,
-        quantity: "",
-        sellPrice: "",
-        paid: "",
-        notes: ""
-      });
-
-      const [expenseForm, setExpenseForm] = useState({
-        date: "",
-        category: "",
-        driver: "",
-        amount: "",
-        notes: ""
-      });
-
-      const [productForm, setProductForm] = useState({ category: "كتاكيت", name: "", variant: "", unit: "كتكوت" });
-      const [supplierForm, setSupplierForm] = useState({ name: "", phone: "" });
-      const [customerForm, setCustomerForm] = useState({ name: "", phone: "", area: "" });
-      const [employeeForm, setEmployeeForm] = useState({ name: "", role: "سائق/موزع", phone: "", baseSalary: "", commissionPer1000: "30" });
-
-      const [payrollForm, setPayrollForm] = useState({ date: "", employee: employees[0]?.name || "", kind: "سلفة", amount: "", notes: "" });
-
-      // Keep selects valid when lists change
+      // Ensure tabs allowed
       useEffect(() => {
-        if (suppliers.length && !suppliers.some(s => s.name === purchaseForm.supplier)) {
-          setPurchaseForm(f => ({ ...f, supplier: suppliers[0].name }));
+        if (currentUser && !canSeeTab(currentUser.role, activeTab)) {
+          setActiveTab(ROLE_TABS[currentUser.role]?.[0] || "sales");
         }
-        if (customers.length && !customers.some(c => c.name === saleForm.customer)) {
-          setSaleForm(f => ({ ...f, customer: customers[0].name }));
-        }
-        if (driversList.length && !driversList.includes(saleForm.driver)) {
-          setSaleForm(f => ({ ...f, driver: driversList[0] }));
-        }
-        if (products.length && !products.some(p => p.name === purchaseForm.product)) {
-          setPurchaseForm(f => ({ ...f, product: products[0].name }));
-        }
-        if (products.length && !products.some(p => p.name === saleForm.product)) {
-          setSaleForm(f => ({ ...f, product: products[0].name }));
-        }
-        if (employees.length && !employees.some(e => e.name === payrollForm.employee)) {
-          setPayrollForm(f => ({ ...f, employee: employees[0]?.name || "" }));
-        }
-      }, [suppliers, customers, driversList, products, employees]);
+      }, [currentUser]);
 
-      function setErr(key, msg) { setErrors(prev => ({ ...prev, [key]: msg })); }
-      function clearErr(key) { setErrors(prev => ({ ...prev, [key]: "" })); }
-
-      // Stock by product (purchases - losses - sales)
+      // Stock
       const stockByProduct = useMemo(() => {
         const map = {};
-        products.forEach(p => { map[p.name] = 0; });
-
-        for (const p of purchases) {
-          const key = p.product;
-          if (map[key] == null) map[key] = 0;
-          map[key] += toNumber(p.quantity) - toNumber(p.loss || 0);
-        }
-        for (const s of sales) {
-          const key = s.product;
-          if (map[key] == null) map[key] = 0;
-          map[key] -= toNumber(s.quantity);
-        }
+        products.forEach(p => map[p.name] = 0);
+        purchases.forEach(p => { map[p.product] = (map[p.product]||0) + toNumber(p.quantity) - toNumber(p.loss||0); });
+        sales.forEach(s => { map[s.product] = (map[s.product]||0) - toNumber(s.quantity); });
         return map;
-      }, [purchases, sales, products]);
+      }, [products, purchases, sales]);
+      const totalStock = useMemo(() => Object.values(stockByProduct).reduce((a,b)=>a+toNumber(b),0), [stockByProduct]);
 
-      const currentStockAll = useMemo(
-        () => Object.values(stockByProduct).reduce((a, b) => a + toNumber(b), 0),
-        [stockByProduct]
-      );
-
-      // KPIs (with optional date filter)
+      // Admin KPI
       const kpis = useMemo(() => {
-        const totalOwedToSuppliers = purchases.reduce((sum, p) => sum + toNumber(p.debt), 0);
-        const totalOwedFromCustomers = sales.reduce((sum, s) => sum + toNumber(s.debt), 0);
+        const owedToSuppliers = purchases.reduce((sum,p)=>sum+toNumber(p.debt),0);
+        const owedFromCustomers = sales.reduce((sum,s)=>sum+toNumber(s.debt),0);
+        const salesValue = sales.reduce((sum,s)=>sum+toNumber(s.total),0);
+        const expensesValue = expenses.reduce((sum,e)=>sum+toNumber(e.amount),0);
 
-        const filteredSales = filterDate ? sales.filter(s => s.date === filterDate) : [];
-        const filteredSalesValue = filteredSales.reduce((sum, s) => sum + toNumber(s.total), 0);
+        const purchasedQty = purchases.reduce((sum,p)=>sum+toNumber(p.quantity),0);
+        const purchaseValue = purchases.reduce((sum,p)=>sum+toNumber(p.total),0);
+        const avgBuy = purchasedQty>0 ? purchaseValue/purchasedQty : 0;
 
-        const totalSalesValue = sales.reduce((sum, s) => sum + toNumber(s.total), 0);
-        const totalPurchaseValue = purchases.reduce((sum, p) => sum + toNumber(p.total), 0);
-        const totalExpensesValue = expenses.reduce((sum, e) => sum + toNumber(e.amount), 0);
+        const soldQty = sales.reduce((sum,s)=>sum+toNumber(s.quantity),0);
+        const estProfit = salesValue - (soldQty*avgBuy) - expensesValue;
 
-        const totalPurchasedQty = purchases.reduce((sum, p) => sum + toNumber(p.quantity), 0);
-        const avgBuy = totalPurchasedQty > 0 ? (totalPurchaseValue / totalPurchasedQty) : 0;
-
-        const totalSoldQty = sales.reduce((sum, s) => sum + toNumber(s.quantity), 0);
-        const estCostSold = totalSoldQty * avgBuy;
-
-        const estimatedProfit = totalSalesValue - estCostSold - totalExpensesValue;
-
-        return { totalOwedToSuppliers, totalOwedFromCustomers, filteredSalesValue, estimatedProfit };
+        const todaySales = filterDate ? sales.filter(s => s.date === filterDate).reduce((sum,s)=>sum+toNumber(s.total),0) : 0;
+        return { owedToSuppliers, owedFromCustomers, estProfit, todaySales };
       }, [purchases, sales, expenses, filterDate]);
 
-      // Settlements (with optional date filter)
-      const driverSettlements = useMemo(() => {
-        const drivers = {};
-        const daySales = filterDate ? sales.filter(s => s.date === filterDate) : [];
-        const dayExpenses = filterDate ? expenses.filter(e => e.date === filterDate) : [];
-
-        daySales.forEach(s => {
-          if (!s.driver) return;
-          if (!drivers[s.driver]) drivers[s.driver] = { name: s.driver, totalQty: 0, totalValue: 0, cashCollected: 0, debtLeft: 0, expenses: 0 };
-          drivers[s.driver].totalQty += toNumber(s.quantity);
-          drivers[s.driver].totalValue += toNumber(s.total);
-          drivers[s.driver].cashCollected += toNumber(s.paid);
-          drivers[s.driver].debtLeft += toNumber(s.debt);
+      // Settlements (admin, per filterDate)
+      const settlements = useMemo(() => {
+        if (!filterDate) return [];
+        const map = {};
+        sales.filter(s=>s.date===filterDate).forEach(s=>{
+          map[s.driver] ||= { name:s.driver, cash:0, expenses:0, total:0, qty:0, debt:0 };
+          map[s.driver].cash += toNumber(s.paid);
+          map[s.driver].total += toNumber(s.total);
+          map[s.driver].qty += toNumber(s.quantity);
+          map[s.driver].debt += toNumber(s.debt);
         });
-
-        dayExpenses.forEach(e => {
+        expenses.filter(e=>e.date===filterDate).forEach(e=>{
           if (!e.driver) return;
-          if (!drivers[e.driver]) drivers[e.driver] = { name: e.driver, totalQty: 0, totalValue: 0, cashCollected: 0, debtLeft: 0, expenses: 0 };
-          drivers[e.driver].expenses += toNumber(e.amount);
+          map[e.driver] ||= { name:e.driver, cash:0, expenses:0, total:0, qty:0, debt:0 };
+          map[e.driver].expenses += toNumber(e.amount);
         });
-
-        return Object.values(drivers).map(d => ({ ...d, netRequiredToReturn: d.cashCollected - d.expenses }));
+        return Object.values(map).map(d => ({...d, net: d.cash - d.expenses}));
       }, [sales, expenses, filterDate]);
 
-      // Payroll summary (month filter)
-      const payrollSummary = useMemo(() => {
-        if (!payrollMonth) return [];
-        const monthSales = sales.filter(s => monthKey(s.date) === payrollMonth);
-        const monthTx = payrollTx.filter(t => monthKey(t.date) === payrollMonth);
+      // Receipt
+      const [receiptDate, setReceiptDate] = useState("");
+      const [receiptCustomer, setReceiptCustomer] = useState(customers[0]?.name || "");
+      const [receiptDriver, setReceiptDriver] = useState("");
+      const [receiptNotes, setReceiptNotes] = useState("");
+      const [receiptPreview, setReceiptPreview] = useState(null);
+      const [receiptErr, setReceiptErr] = useState("");
 
-        const soldByName = {};
-        for (const s of monthSales) soldByName[s.driver] = (soldByName[s.driver] || 0) + toNumber(s.quantity);
-
-        const txByName = {};
-        for (const t of monthTx) {
-          const amt = toNumber(t.amount);
-          let signed = amt;
-          if (t.kind === "سلفة" || t.kind === "خصم") signed = -Math.abs(amt);
-          if (t.kind === "مكافأة") signed = Math.abs(amt);
-          txByName[t.employee] = (txByName[t.employee] || 0) + signed;
-        }
-
-        return employees
-          .filter(e => e.active)
-          .map(e => {
-            const soldQty = soldByName[e.name] || 0;
-            const commission = (soldQty / 1000) * toNumber(e.commissionPer1000 || 0);
-            const base = toNumber(e.baseSalary || 0);
-            const adjustments = txByName[e.name] || 0;
-            const net = base + commission + adjustments;
-            return { name: e.name, role: e.role, soldQty, base, commission, adjustments, net };
-          });
-      }, [employees, payrollMonth, payrollTx, sales]);
-
-      // Actions
-      function addProduct() {
-        clearErr("products");
-        const category = (productForm.category || "").trim();
-        const name = (productForm.name || "").trim();
-        const variant = (productForm.variant || "").trim();
-        const unit = (productForm.unit || "").trim();
-
-        if (!name) return setErr("products", "اكتب اسم المنتج.");
-        if (products.some(p => p.name === name)) return setErr("products", "المنتج موجود بالفعل بنفس الاسم.");
-
-        setProducts(prev => [{ id: Date.now(), category, name, variant, unit }, ...prev]);
-        setProductForm({ category: "كتاكيت", name: "", variant: "", unit: "كتكوت" });
+      function login(){
+        setLoginErr("");
+        const u = users.find(x => x.username.toLowerCase() === (loginUsername||"").trim().toLowerCase());
+        if (!u) return setLoginErr("المستخدم غير موجود.");
+        if ((loginPin||"").trim() !== u.pin) return setLoginErr("PIN غير صحيح.");
+        setCurrentUser({ id:u.id, username:u.username, displayName:u.displayName, role:u.role });
+        setActiveTab(u.role==="clerk" ? "sales" : "dashboard");
+        setMenuOpen(false);
       }
+      function logout(){ setCurrentUser(null); setActiveTab("sales"); setMenuOpen(false); }
 
-      function addPurchase() {
-        clearErr("purchase");
-        const date = (purchaseForm.date || "").trim();
-        const supplier = (purchaseForm.supplier || "").trim();
-        const product = (purchaseForm.product || "").trim();
+      function addPurchase(){
+        setErr(e=>({...e,purchase:""}));
+        const date = (purchaseForm.date||"").trim();
+        const supplier = (purchaseForm.supplier||"").trim();
+        const product = (purchaseForm.product||"").trim();
         const quantity = toNumber(purchaseForm.quantity);
         const buyPrice = toNumber(purchaseForm.buyPrice);
         const paid = toNumber(purchaseForm.paid);
         const loss = Math.max(0, Math.min(toNumber(purchaseForm.loss), quantity));
 
-        if (!date || !supplier || !product || quantity <= 0 || buyPrice <= 0) {
-          setErr("purchase", "من فضلك املأ: التاريخ + المعمل + المنتج + الكمية + سعر الشراء (قيم صحيحة).");
-          return;
+        if(!date||!supplier||!product||quantity<=0||buyPrice<=0){
+          return setErr(e=>({...e,purchase:"املأ: التاريخ + المعمل + المنتج + الكمية + سعر الشراء."}));
         }
-
-        const total = quantity * buyPrice;
+        const total = quantity*buyPrice;
         const debt = computeDebt(total, paid);
 
-        const row = {
-          id: Date.now(),
-          date,
-          supplier,
-          product,
-          quantity,
-          buyPrice,
-          total,
-          paid,
-          debt,
-          loss,
-          notes: purchaseForm.notes || ""
-        };
-
+        const row = { id:Date.now(), createdBy:currentUser?.displayName||"—", date,supplier,product,quantity,buyPrice,total,paid,debt,loss,notes:purchaseForm.notes||"" };
         setPurchases(prev => [row, ...prev]);
-        setPurchaseForm(f => ({ ...f, quantity: "", buyPrice: "", paid: "", loss: "0", notes: "" }));
+        setPurchaseForm(f=>({...f,quantity:"",buyPrice:"",paid:"",loss:"0",notes:""}));
       }
 
-      function addSale() {
-        clearErr("sale");
-        const date = (saleForm.date || "").trim();
-        const customer = (saleForm.customer || "").trim();
-        const driver = (saleForm.driver || "").trim();
-        const product = (saleForm.product || "").trim();
+      function addSale(){
+        setErr(e=>({...e,sale:""}));
+        const date = (saleForm.date||"").trim();
+        const customer = (saleForm.customer||"").trim();
+        const driver = (saleForm.driver||"").trim();
+        const product = (saleForm.product||"").trim();
         const quantity = toNumber(saleForm.quantity);
         const sellPrice = toNumber(saleForm.sellPrice);
         const paid = toNumber(saleForm.paid);
 
-        if (!date || !customer || !driver || !product || quantity <= 0 || sellPrice <= 0) {
-          setErr("sale", "من فضلك املأ: التاريخ + العميل + الموزع + المنتج + الكمية + سعر البيع (قيم صحيحة).");
-          return;
+        if(!date||!customer||!driver||!product||quantity<=0||sellPrice<=0){
+          return setErr(e=>({...e,sale:"املأ: التاريخ + العميل + الموزع + المنتج + الكمية + سعر البيع."}));
         }
-
-        const available = toNumber(stockByProduct[product] || 0);
-        if (quantity > available) {
-          setErr("sale", `المخزون غير كافي للمنتج (${product}). المتاح: ${formatQty(available)} — المطلوب: ${formatQty(quantity)}.`);
-          return;
+        const available = toNumber(stockByProduct[product]||0);
+        if(quantity>available){
+          return setErr(e=>({...e,sale:`المخزون غير كافي (${product}). المتاح: ${formatQty(available)}.`}));
         }
-
-        const total = quantity * sellPrice;
+        const total = quantity*sellPrice;
         const debt = computeDebt(total, paid);
 
-        const row = {
-          id: Date.now(),
-          date,
-          customer,
-          driver,
-          product,
-          quantity,
-          sellPrice,
-          total,
-          paid,
-          debt,
-          notes: saleForm.notes || ""
-        };
-
+        const row = { id:Date.now(), createdBy:currentUser?.displayName||"—", date,customer,driver,product,quantity,sellPrice,total,paid,debt,notes:saleForm.notes||"" };
         setSales(prev => [row, ...prev]);
-        setSaleForm(f => ({ ...f, quantity: "", sellPrice: "", paid: "", notes: "" }));
+        setSaleForm(f=>({...f,quantity:"",sellPrice:"",paid:"",notes:""}));
       }
 
-      function addExpense() {
-        clearErr("expense");
-        const date = (expenseForm.date || "").trim();
-        const category = (expenseForm.category || "").trim();
-        const driver = (expenseForm.driver || "").trim();
+      function addExpense(){
+        setErr(e=>({...e,expense:""}));
+        const date = (expenseForm.date||"").trim();
+        const category = (expenseForm.category||"").trim();
+        const driver = (expenseForm.driver||"").trim();
         const amount = toNumber(expenseForm.amount);
-
-        if (!date || !category || amount <= 0) {
-          setErr("expense", "من فضلك املأ: التاريخ + نوع المصروف + المبلغ (قيمة صحيحة).");
-          return;
+        if(!date||!category||amount<=0){
+          return setErr(e=>({...e,expense:"املأ: التاريخ + نوع المصروف + مبلغ صحيح."}));
         }
-
-        const row = { id: Date.now(), date, category, driver: driver || "", amount, notes: expenseForm.notes || "" };
+        const row = { id:Date.now(), createdBy:currentUser?.displayName||"—", date,category,driver:driver||"",amount,notes:expenseForm.notes||"" };
         setExpenses(prev => [row, ...prev]);
-        setExpenseForm({ date: "", category: "", driver: "", amount: "", notes: "" });
+        setExpenseForm({ date:"",category:"",driver:"",amount:"",notes:"" });
       }
 
-      function addSupplier() {
-        clearErr("people");
-        const name = (supplierForm.name || "").trim();
-        if (!name) return setErr("people", "اكتب اسم المعمل/المورد.");
-        if (suppliers.some(s => s.name === name)) return setErr("people", "المورد موجود بالفعل.");
-        setSuppliers(prev => [{ id: Date.now(), name, phone: (supplierForm.phone || "").trim() }, ...prev]);
-        setSupplierForm({ name: "", phone: "" });
+      function removeRow(kind, id){
+        if(!confirm("حذف السطر؟")) return;
+        if(kind==="purchase") setPurchases(p=>p.filter(x=>x.id!==id));
+        if(kind==="sale") setSales(p=>p.filter(x=>x.id!==id));
+        if(kind==="expense") setExpenses(p=>p.filter(x=>x.id!==id));
       }
 
-      function addCustomer() {
-        clearErr("people");
-        const name = (customerForm.name || "").trim();
-        if (!name) return setErr("people", "اكتب اسم العميل/المزرعة.");
-        if (customers.some(c => c.name === name)) return setErr("people", "العميل موجود بالفعل.");
-        setCustomers(prev => [{ id: Date.now(), name, phone: (customerForm.phone || "").trim(), area: (customerForm.area || "").trim() }, ...prev]);
-        setCustomerForm({ name: "", phone: "", area: "" });
+      function buildReceipt(){
+        setReceiptErr(""); setReceiptPreview(null);
+        const d = (receiptDate||"").trim();
+        const c = (receiptCustomer||"").trim();
+        const drv = (receiptDriver||"").trim();
+        if(!d||!c) return setReceiptErr("اختار التاريخ + العميل.");
+
+        const list = sales
+          .filter(s=>s.date===d)
+          .filter(s=>s.customer===c)
+          .filter(s=>drv ? s.driver===drv : true);
+
+        if(list.length===0) return setReceiptErr("مفيش عمليات بيع مطابقة.");
+
+        const items = list.map(s=>({
+          product:s.product,
+          unit:productUnit(s.product),
+          quantity:formatQty(s.quantity),
+          price:`${formatMoney(s.sellPrice)} ج`,
+          total:`${formatMoney(s.total)} ج`,
+        }));
+
+        const total = list.reduce((sum,s)=>sum+toNumber(s.total),0);
+        const paid = list.reduce((sum,s)=>sum+toNumber(s.paid),0);
+        const debt = list.reduce((sum,s)=>sum+toNumber(s.debt),0);
+
+        const driverLabel = drv || (Array.from(new Set(list.map(x=>x.driver))).length===1 ? list[0].driver : "متعدد");
+
+        setReceiptPreview({
+          title:"إيصال بيع",
+          companyName:"برو تشيكس",
+          date:d,
+          customer:c,
+          driver:driverLabel,
+          items,
+          totals:{ total:formatMoney(total), paid:formatMoney(paid), debt:formatMoney(debt) },
+          notes:receiptNotes
+        });
       }
 
-      function addEmployee() {
-        clearErr("people");
-        const name = (employeeForm.name || "").trim();
-        if (!name) return setErr("people", "اكتب اسم الموظف.");
-        if (employees.some(e => e.name === name)) return setErr("people", "الموظف موجود بالفعل.");
-
-        setEmployees(prev => [{
-          id: Date.now(),
-          name,
-          role: employeeForm.role || "سائق/موزع",
-          phone: (employeeForm.phone || "").trim(),
-          baseSalary: toNumber(employeeForm.baseSalary),
-          commissionPer1000: toNumber(employeeForm.commissionPer1000),
-          active: true
-        }, ...prev]);
-
-        setEmployeeForm({ name: "", role: "سائق/موزع", phone: "", baseSalary: "", commissionPer1000: "30" });
+      function printReceipt(){
+        if(!receiptPreview) return;
+        printReceiptHTML(receiptPreview);
       }
 
-      function addPayrollTx() {
-        clearErr("payroll");
-        const date = (payrollForm.date || "").trim();
-        const employee = (payrollForm.employee || "").trim();
-        const kind = payrollForm.kind;
-        const amount = toNumber(payrollForm.amount);
-
-        if (!date || !employee || amount <= 0) return setErr("payroll", "املأ: التاريخ + الموظف + مبلغ صحيح.");
-
-        const row = { id: Date.now(), date, employee, kind, amount, notes: payrollForm.notes || "" };
-        setPayrollTx(prev => [row, ...prev]);
-        setPayrollForm(f => ({ ...f, amount: "", notes: "" }));
+      // Pin change (admin)
+      const [pinEdit, setPinEdit] = useState({ username:"ali", newPin:"" });
+      function changePin(){
+        if(currentUser?.role!=="admin") return;
+        setErr(e=>({...e,admin:""}));
+        const uname = (pinEdit.username||"").trim().toLowerCase();
+        const np = (pinEdit.newPin||"").trim();
+        if(np.length<4) return setErr(e=>({...e,admin:"PIN لازم يكون 4 أرقام أو أكتر."}));
+        setUsers(prev => prev.map(u => u.username.toLowerCase()===uname ? ({...u, pin:np}) : u));
+        setPinEdit(p=>({...p,newPin:""}));
       }
 
-      function removeRow(kind, id) {
-        if (kind === "product") setProducts(p => p.filter(x => x.id !== id));
-        if (kind === "purchase") setPurchases(p => p.filter(x => x.id !== id));
-        if (kind === "sale") setSales(p => p.filter(x => x.id !== id));
-        if (kind === "expense") setExpenses(p => p.filter(x => x.id !== id));
-        if (kind === "supplier") setSuppliers(p => p.filter(x => x.id !== id));
-        if (kind === "customer") setCustomers(p => p.filter(x => x.id !== id));
-        if (kind === "employee") setEmployees(p => p.filter(x => x.id !== id));
-        if (kind === "payrollTx") setPayrollTx(p => p.filter(x => x.id !== id));
-      }
-
-      function resetAllData() {
-        const ok = confirm("متأكد؟ هتمسح كل البيانات المحفوظة على الجهاز (LocalStorage).");
-        if (!ok) return;
-        localStorage.removeItem("pc_products");
-        localStorage.removeItem("pc_suppliers");
-        localStorage.removeItem("pc_customers");
-        localStorage.removeItem("pc_employees");
-        localStorage.removeItem("pc_purchases");
-        localStorage.removeItem("pc_sales");
-        localStorage.removeItem("pc_expenses");
-        localStorage.removeItem("pc_payroll_tx");
-        location.reload();
-      }
-
-      const productUnit = (name) => products.find(p => p.name === name)?.unit || "";
-
-      return (
-        <div className="flex h-screen bg-slate-100" dir="rtl">
-          {/* Sidebar */}
-          <div className="w-72 bg-white border-l border-slate-200 shadow-sm flex flex-col">
-            <div className="p-6 border-b border-slate-100">
-              <h1 className="text-2xl font-black text-blue-700 flex items-center gap-2">
-                <span className="text-blue-600"><Icon name="package" size={24}/></span>
-                برو تشيكس
-              </h1>
-              <p className="text-sm text-slate-500 mt-1 font-black">نظام إدارة التوزيع المباشر</p>
-
-              <div className="mt-4 bg-slate-50 border border-slate-200 p-3 rounded-xl">
-                <p className="text-xs text-slate-500 font-black">مخزون حالي (تقديري)</p>
-                <p className="text-lg font-black text-slate-800">{formatQty(currentStockAll)}</p>
-                <p className="text-xs text-slate-500 mt-1 font-bold">
-                  (حسب المشتريات - الفاقد - المبيعات)
-                </p>
+      if(!currentUser){
+        return (
+          <div className="min-h-screen flex items-center justify-center p-4">
+            <div className="w-full max-w-md bg-white border border-slate-200 rounded-2xl shadow-sm p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-3 rounded-xl bg-blue-600 text-white"><Icon name="lock" size={22}/></div>
+                <div>
+                  <h1 className="text-xl font-black text-slate-900">تسجيل الدخول</h1>
+                  <p className="text-xs text-slate-500 font-bold">صلاحيات مختلفة لكل موظف</p>
+                </div>
               </div>
 
-              <div className="mt-4">
-                <Button variant="secondary" className="w-full" onClick={resetAllData}>
-                  <Icon name="trash" size={18}/> مسح كل البيانات
-                </Button>
+              {loginErr && <Notice variant="warn"><div className="font-black">{loginErr}</div></Notice>}
+
+              <div className="grid gap-3 mt-4">
+                <Field label="Username">
+                  <Input value={loginUsername} onChange={(e)=>setLoginUsername(e.target.value)} placeholder="admin أو ali" />
+                </Field>
+                <Field label="PIN">
+                  <Input value={loginPin} onChange={(e)=>setLoginPin(e.target.value)} type="password" inputMode="numeric" placeholder="••••" />
+                </Field>
+                <Button onClick={login}><Icon name="lock" size={18}/> دخول</Button>
               </div>
-            </div>
 
-            <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-              <SidebarItem id="dashboard" iconName="dashboard" label="لوحة التحكم" activeTab={activeTab} setActiveTab={setActiveTab} />
-              <SidebarItem id="products" iconName="tag" label="المنتجات (Variants)" activeTab={activeTab} setActiveTab={setActiveTab} />
-              <SidebarItem id="purchases" iconName="cart" label="المشتريات (المعامل)" activeTab={activeTab} setActiveTab={setActiveTab} />
-              <SidebarItem id="sales" iconName="truck" label="المبيعات (العملاء)" activeTab={activeTab} setActiveTab={setActiveTab} />
-              <SidebarItem id="settlements" iconName="users" label="تقفيل اليومية (الموزعين)" activeTab={activeTab} setActiveTab={setActiveTab} />
-              <SidebarItem id="expenses" iconName="receipt" label="المصروفات" activeTab={activeTab} setActiveTab={setActiveTab} />
-              <SidebarItem id="people" iconName="building" label="العملاء/المعامل/الموظفين" activeTab={activeTab} setActiveTab={setActiveTab} />
-              <SidebarItem id="payroll" iconName="banknote" label="الرواتب والعمولات" activeTab={activeTab} setActiveTab={setActiveTab} />
-            </nav>
-
-            <div className="p-4 border-t border-slate-100 text-xs text-slate-500 font-bold">
-              نسخة HTML واحدة (React CDN + LocalStorage). التاريخ لا يُملأ تلقائياً — أنت تدخل التاريخ بنفسك.
+              <div className="mt-4 bg-slate-50 border border-slate-200 rounded-xl p-3">
+                <p className="text-xs text-slate-600 font-black">حسابات افتراضية:</p>
+                <ul className="text-xs text-slate-700 font-bold mt-1 list-disc pr-5">
+                  <li>admin / 1234 (مدير)</li>
+                  <li>ali / 0000 (علي عبدالله - إدخال بيانات فقط)</li>
+                </ul>
+              </div>
             </div>
           </div>
+        );
+      }
 
-          {/* Main */}
-          <div className="flex-1 overflow-auto">
-            <header className="bg-white p-4 shadow-sm border-b border-slate-200 flex justify-between items-center sticky top-0 z-10">
-              <h2 className="text-xl font-black text-slate-800">
-                {activeTab === "dashboard" && "نظرة عامة على النشاط"}
-                {activeTab === "products" && "إدارة المنتجات والأنواع (Variants)"}
-                {activeTab === "purchases" && "إدارة المشتريات والاستلامات"}
-                {activeTab === "sales" && "إدارة المبيعات والتوزيع"}
-                {activeTab === "settlements" && "تقفيل يومية الموزعين"}
-                {activeTab === "expenses" && "مصروفات التشغيل"}
-                {activeTab === "people" && "إدارة البيانات الأساسية"}
-                {activeTab === "payroll" && "الرواتب والعمولات"}
-              </h2>
+      const nav = [
+        { id:"dashboard", icon:"dashboard", label:"لوحة التحكم" },
+        { id:"products", icon:"tag", label:"المنتجات" },
+        { id:"purchases", icon:"cart", label:"المشتريات" },
+        { id:"sales", icon:"truck", label:"المبيعات" },
+        { id:"receipts", icon:"printer", label:"الإيصالات" },
+        { id:"settlements", icon:"users", label:"تقفيل اليومية" },
+        { id:"expenses", icon:"receipt", label:"المصروفات" },
+        { id:"settings", icon:"settings", label:"الإعدادات" },
+      ].filter(t => canSeeTab(currentUser.role, t.id));
 
-              <div className="flex gap-3 items-end flex-wrap">
-                <Field label="فلتر بالتاريخ (للمبيعات/التقفيل)">
-                  <Input type="date" value={filterDate} onChange={(e) => setFilterDate(e.target.value)} placeholder="YYYY-MM-DD" />
-                </Field>
-                <Button variant="secondary" onClick={() => setFilterDate("")}>مسح الفلتر</Button>
-              </div>
-            </header>
+      const titleByTab = {
+        dashboard:"نظرة عامة",
+        products:"المنتجات",
+        purchases:"المشتريات",
+        sales:"المبيعات",
+        receipts:"الإيصالات",
+        settlements:"تقفيل اليومية",
+        expenses:"المصروفات",
+        settings:"الإعدادات",
+      };
 
-            <main className="p-6">
-              {/* DASHBOARD */}
-              {activeTab === "dashboard" && (
-                <div className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <DashboardCard title="الرصيد الحالي (مخزون تقديري)" value={`${formatQty(currentStockAll)}`} iconName="package" color="bg-blue-500" />
-                    <DashboardCard title={filterDate ? `مبيعات بتاريخ (${filterDate})` : "مبيعات بتاريخ (اختر فلتر)"} value={`${formatMoney(kpis.filteredSalesValue)} ج.م`} iconName="wallet" color="bg-emerald-500" />
-                    <DashboardCard title="ديون لنا (عند العملاء)" value={`${formatMoney(kpis.totalOwedFromCustomers)} ج.م`} iconName="users" color="bg-orange-500" />
-                    <DashboardCard title="ديون علينا (للمعامل)" value={`${formatMoney(kpis.totalOwedToSuppliers)} ج.م`} iconName="alert" color="bg-red-500" />
+      function goTab(id){ setActiveTab(id); setMenuOpen(false); }
+
+      return (
+        <div className="min-h-screen">
+          <header className="sticky top-0 z-30 bg-white border-b border-slate-200">
+            <div className="px-4 py-3 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <button className="p-2 rounded-xl hover:bg-slate-100 lg:hidden" onClick={()=>setMenuOpen(v=>!v)} aria-label="Menu">
+                  <Icon name={menuOpen ? "x" : "menu"} size={22}/>
+                </button>
+                <div className="flex items-center gap-2">
+                  <div className="p-2 rounded-xl bg-blue-600 text-white"><Icon name="package" size={18}/></div>
+                  <div>
+                    <div className="font-black text-slate-900 leading-5">برو تشيكس</div>
+                    <div className="text-xs text-slate-500 font-bold">{titleByTab[activeTab] || ""}</div>
                   </div>
+                </div>
+              </div>
 
-                  <Card>
-                    <h3 className="text-lg font-black text-slate-800 mb-4">ملخص أرباح تقديرية (كل الفترة)</h3>
-                    <div className="text-3xl font-black text-emerald-600">{formatMoney(kpis.estimatedProfit)} ج.م</div>
-                    <p className="text-slate-500 text-sm mt-2 font-bold">
-                      محسوبة: (إجمالي المبيعات - متوسط تكلفة الشراء للكمية المباعة - المصروفات)
-                    </p>
-                  </Card>
+              <div className="flex items-center gap-2">
+                <div className="hidden sm:flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2">
+                  <span className="text-xs text-slate-500 font-black">المخزون</span>
+                  <span className="font-black text-slate-900">{formatQty(totalStock)}</span>
+                </div>
+                <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2">
+                  <span className="font-black text-slate-900">{currentUser.displayName}</span>
+                </div>
+                <button className="p-2 rounded-xl hover:bg-slate-100" onClick={logout} title="خروج">
+                  <Icon name="logout" size={20} className="text-slate-700"/>
+                </button>
+              </div>
+            </div>
 
-                  <Card>
-                    <h3 className="text-lg font-black text-slate-800 mb-4">المخزون حسب المنتج</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {products.map(p => (
-                        <div key={p.id} className="p-4 bg-slate-50 rounded-xl border border-slate-100">
-                          <p className="text-sm text-slate-500 font-black">{p.name} <span className="text-slate-400">({p.unit})</span></p>
-                          <p className="text-2xl font-black text-slate-800">{formatQty(stockByProduct[p.name] || 0)}</p>
-                          <p className="text-xs text-slate-500 font-bold">{p.category}{p.variant ? ` • ${p.variant}` : ""}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </Card>
+            {currentUser.role==="admin" && (
+              <div className="px-4 pb-3">
+                <div className="flex flex-col sm:flex-row sm:items-end gap-2">
+                  <div className="flex-1">
+                    <Field label="فلتر بالتاريخ (لليومية/المبيعات)">
+                      <Input type="date" value={filterDate} onChange={(e)=>setFilterDate(e.target.value)} />
+                    </Field>
+                  </div>
+                  <div className="sm:w-auto">
+                    <Button variant="secondary" onClick={()=>setFilterDate("")}>مسح الفلتر</Button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </header>
+
+          {menuOpen && (
+            <div className="fixed inset-0 z-40 lg:hidden" onClick={()=>setMenuOpen(false)}>
+              <div className="absolute inset-0 bg-black/30"></div>
+              <div className="absolute top-0 right-0 h-full w-80 max-w-[85%] bg-white border-l border-slate-200 p-4 overflow-auto" onClick={(e)=>e.stopPropagation()}>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="font-black text-slate-900">القائمة</div>
+                  <button className="p-2 rounded-xl hover:bg-slate-100" onClick={()=>setMenuOpen(false)}><Icon name="x" size={20}/></button>
+                </div>
+                <div className="space-y-2">
+                  {nav.map(t => <TabBtn key={t.id} active={activeTab===t.id} icon={t.icon} label={t.label} onClick={()=>goTab(t.id)} />)}
+                </div>
+                <div className="mt-4 text-xs text-slate-500 font-bold">
+                  صلاحيات: {currentUser.role==="admin" ? "مدير" : "إدخال بيانات فقط"}
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="lg:flex">
+            <aside className="hidden lg:block w-80 bg-white border-l border-slate-200 min-h-[calc(100vh-64px)] sticky top-[64px] p-4">
+              <div className="space-y-2">
+                {nav.map(t => <TabBtn key={t.id} active={activeTab===t.id} icon={t.icon} label={t.label} onClick={()=>goTab(t.id)} />)}
+              </div>
+              <div className="mt-4 bg-slate-50 border border-slate-200 rounded-xl p-3">
+                <p className="text-xs text-slate-600 font-black">المخزون الحالي</p>
+                <p className="text-2xl font-black text-slate-900">{formatQty(totalStock)}</p>
+              </div>
+            </aside>
+
+            <main className="flex-1 p-4 sm:p-6 space-y-4">
+              {activeTab==="dashboard" && currentUser.role==="admin" && (
+                <div className="space-y-4">
+                  <Notice variant="info"><div className="font-black">لوحة التحكم للمدير فقط.</div></Notice>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+                    <Card><div className="text-xs text-slate-500 font-black">المخزون</div><div className="text-2xl font-black">{formatQty(totalStock)}</div></Card>
+                    <Card><div className="text-xs text-slate-500 font-black">{filterDate ? `مبيعات (${filterDate})` : "مبيعات (اختر فلتر)"}</div><div className="text-2xl font-black">{formatMoney(kpis.todaySales)} ج</div></Card>
+                    <Card><div className="text-xs text-slate-500 font-black">ديون لنا (عند العملاء)</div><div className="text-2xl font-black">{formatMoney(kpis.owedFromCustomers)} ج</div></Card>
+                    <Card><div className="text-xs text-slate-500 font-black">ديون علينا (للمعامل)</div><div className="text-2xl font-black">{formatMoney(kpis.owedToSuppliers)} ج</div></Card>
+                  </div>
+                  <Card><div className="text-xs text-slate-500 font-black">ربح تقديري (كل الفترة)</div><div className="text-3xl font-black text-emerald-700">{formatMoney(kpis.estProfit)} ج</div></Card>
                 </div>
               )}
 
-              {/* PRODUCTS */}
-              {activeTab === "products" && (
-                <div className="space-y-6">
+              {activeTab==="purchases" && (
+                <div className="space-y-4">
                   <Card>
-                    <h3 className="text-lg font-black text-slate-800 mb-4 flex items-center gap-2">
-                      <span className="text-blue-600"><Icon name="plus" size={20}/></span>
-                      إضافة منتج / نوع / Variant
-                    </h3>
+                    <div className="font-black text-slate-900 flex items-center gap-2"><Icon name="cart" size={18}/> تسجيل استلامة</div>
+                    {err.purchase && <Notice variant="warn"><div className="font-black">{err.purchase}</div></Notice>}
 
-                    {errors.products && (
-                      <Notice variant="warn"><div className="font-black">{errors.products}</div></Notice>
-                    )}
-
-                    <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-                      <Field label="الفئة (Category)">
-                        <Input value={productForm.category} onChange={(e) => setProductForm(f => ({ ...f, category: e.target.value }))} placeholder="مثال: كتاكيت / أعلاف / مستلزمات..." />
-                      </Field>
-
-                      <Field label="اسم المنتج (Product Name)">
-                        <Input value={productForm.name} onChange={(e) => setProductForm(f => ({ ...f, name: e.target.value }))} placeholder="مثال: كتكوت أبيض" />
-                      </Field>
-
-                      <Field label="Variant (اختياري)">
-                        <Input value={productForm.variant} onChange={(e) => setProductForm(f => ({ ...f, variant: e.target.value }))} placeholder="مثال: أبيض / ساسو..." />
-                      </Field>
-
-                      <Field label="الوحدة (Unit)">
-                        <Select value={productForm.unit} onChange={(e) => setProductForm(f => ({ ...f, unit: e.target.value }))}>
-                          <option value="كتكوت">كتكوت</option>
-                          <option value="كجم">كجم</option>
-                          <option value="قطعة">قطعة</option>
-                          <option value="علبة">علبة</option>
-                        </Select>
-                      </Field>
-
-                      <Button onClick={addProduct}>
-                        <Icon name="tag" size={18}/> حفظ
-                      </Button>
-                    </div>
-
-                    <p className="text-xs text-slate-500 font-bold mt-4">
-                      بعد إضافة المنتجات، هتلاقيها ظهرت في المشتريات والمبيعات تلقائيًا.
-                    </p>
-                  </Card>
-
-                  <TableWrap>
-                    <table className="w-full text-right">
-                      <thead className="bg-slate-50 text-slate-600 text-sm">
-                        <tr>
-                          <th className="p-4">حذف</th>
-                          <th className="p-4">الفئة</th>
-                          <th className="p-4">المنتج</th>
-                          <th className="p-4">Variant</th>
-                          <th className="p-4">الوحدة</th>
-                          <th className="p-4">المخزون</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {products.map(p => (
-                          <tr key={p.id} className="border-t border-slate-100 hover:bg-slate-50">
-                            <td className="p-4">
-                              <button onClick={() => removeRow("product", p.id)} className="p-2 rounded-lg hover:bg-red-50 text-red-600">
-                                <Icon name="trash" size={18}/>
-                              </button>
-                            </td>
-                            <td className="p-4 font-bold">{p.category || "-"}</td>
-                            <td className="p-4 font-black">{p.name}</td>
-                            <td className="p-4 font-bold">{p.variant || "-"}</td>
-                            <td className="p-4 font-bold">{p.unit || "-"}</td>
-                            <td className="p-4 font-black">{formatQty(stockByProduct[p.name] || 0)}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </TableWrap>
-                </div>
-              )}
-
-              {/* PURCHASES */}
-              {activeTab === "purchases" && (
-                <div className="space-y-6">
-                  <Card>
-                    <h3 className="text-lg font-black text-slate-800 mb-4 flex items-center gap-2">
-                      <span className="text-blue-600"><Icon name="plus" size={20}/></span>
-                      تسجيل استلامة جديدة
-                    </h3>
-
-                    {errors.purchase && (
-                      <Notice variant="warn"><div className="font-black">{errors.purchase}</div></Notice>
-                    )}
-
-                    <div className="grid grid-cols-1 md:grid-cols-7 gap-4 mt-4">
-                      <Field label="التاريخ">
-                        <Input type="date" value={purchaseForm.date} onChange={(e) => setPurchaseForm(f => ({ ...f, date: e.target.value }))} />
-                      </Field>
-
-                      <Field label="المعمل/المورد">
-                        <Select value={purchaseForm.supplier} onChange={(e) => setPurchaseForm(f => ({ ...f, supplier: e.target.value }))}>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-3">
+                      <Field label="التاريخ"><Input type="date" value={purchaseForm.date} onChange={(e)=>setPurchaseForm(f=>({...f,date:e.target.value}))}/></Field>
+                      <Field label="المعمل">
+                        <Select value={purchaseForm.supplier} onChange={(e)=>setPurchaseForm(f=>({...f,supplier:e.target.value}))}>
                           {suppliers.map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
                         </Select>
                       </Field>
-
                       <Field label="المنتج">
-                        <Select value={purchaseForm.product} onChange={(e) => setPurchaseForm(f => ({ ...f, product: e.target.value }))}>
+                        <Select value={purchaseForm.product} onChange={(e)=>setPurchaseForm(f=>({...f,product:e.target.value}))}>
                           {products.map(p => <option key={p.id} value={p.name}>{p.name} ({p.unit})</option>)}
                         </Select>
                       </Field>
+                      <Field label={`الكمية (${productUnit(purchaseForm.product)})`}><Input type="number" value={purchaseForm.quantity} onChange={(e)=>setPurchaseForm(f=>({...f,quantity:e.target.value}))} placeholder="10000"/></Field>
+                      <Field label="سعر الشراء / وحدة"><Input type="number" step="0.01" value={purchaseForm.buyPrice} onChange={(e)=>setPurchaseForm(f=>({...f,buyPrice:e.target.value}))} placeholder="25"/></Field>
+                      <Field label="المدفوع"><Input type="number" step="0.01" value={purchaseForm.paid} onChange={(e)=>setPurchaseForm(f=>({...f,paid:e.target.value}))} placeholder="200000"/></Field>
+                      <Field label="هالك (اختياري)"><Input type="number" value={purchaseForm.loss} onChange={(e)=>setPurchaseForm(f=>({...f,loss:e.target.value}))} placeholder="0"/></Field>
+                      <Field label="ملاحظات (اختياري)"><Input value={purchaseForm.notes} onChange={(e)=>setPurchaseForm(f=>({...f,notes:e.target.value}))} placeholder="اختياري"/></Field>
 
-                      <Field label={`الكمية (${productUnit(purchaseForm.product)})`}>
-                        <Input type="number" value={purchaseForm.quantity} onChange={(e) => setPurchaseForm(f => ({ ...f, quantity: e.target.value }))} placeholder="مثال: 10000" />
-                      </Field>
-
-                      <Field label="سعر الشراء / وحدة">
-                        <Input type="number" step="0.01" value={purchaseForm.buyPrice} onChange={(e) => setPurchaseForm(f => ({ ...f, buyPrice: e.target.value }))} placeholder="مثال: 25" />
-                      </Field>
-
-                      <Field label="المدفوع للمعمل">
-                        <Input type="number" step="0.01" value={purchaseForm.paid} onChange={(e) => setPurchaseForm(f => ({ ...f, paid: e.target.value }))} placeholder="مثال: 200000" />
-                      </Field>
-
-                      <Field label="فاقد/هالك (اختياري)">
-                        <Input type="number" value={purchaseForm.loss} onChange={(e) => setPurchaseForm(f => ({ ...f, loss: e.target.value }))} placeholder="0" />
-                      </Field>
-
-                      <Field label="ملاحظات" className="md:col-span-6">
-                        <Input value={purchaseForm.notes} onChange={(e) => setPurchaseForm(f => ({ ...f, notes: e.target.value }))} placeholder="اختياري" />
-                      </Field>
-
-                      <Button className="md:col-span-1" onClick={addPurchase}>
-                        <Icon name="cart" size={18}/> حفظ
-                      </Button>
+                      <div className="sm:col-span-2 lg:col-span-4">
+                        <Button onClick={addPurchase}><Icon name="plus" size={18}/> حفظ الاستلامة</Button>
+                      </div>
                     </div>
                   </Card>
 
-                  <TableWrap>
-                    <table className="w-full text-right">
-                      <thead className="bg-slate-50 text-slate-600 text-sm">
-                        <tr>
-                          <th className="p-4">حذف</th>
-                          <th className="p-4">التاريخ</th>
-                          <th className="p-4">المعمل</th>
-                          <th className="p-4">المنتج</th>
-                          <th className="p-4">الكمية</th>
-                          <th className="p-4">فاقد</th>
-                          <th className="p-4">سعر الشراء</th>
-                          <th className="p-4">الإجمالي</th>
-                          <th className="p-4 text-emerald-700">المدفوع</th>
-                          <th className="p-4 text-red-700">المتبقي علينا</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {purchases.map(p => (
-                          <tr key={p.id} className="border-t border-slate-100 hover:bg-slate-50">
-                            <td className="p-4">
-                              <button onClick={() => removeRow("purchase", p.id)} className="p-2 rounded-lg hover:bg-red-50 text-red-600">
-                                <Icon name="trash" size={18}/>
-                              </button>
-                            </td>
-                            <td className="p-4">{p.date}</td>
-                            <td className="p-4 font-black">{p.supplier}</td>
-                            <td className="p-4 font-bold">{p.product}</td>
-                            <td className="p-4">{formatQty(p.quantity)} <span className="text-slate-400 text-xs">{productUnit(p.product)}</span></td>
-                            <td className="p-4 text-orange-700 font-black">{formatQty(p.loss)}</td>
-                            <td className="p-4">{formatMoney(p.buyPrice)} ج</td>
-                            <td className="p-4 font-black">{formatMoney(p.total)} ج</td>
-                            <td className="p-4 text-emerald-700 font-black">{formatMoney(p.paid)} ج</td>
-                            <td className="p-4 text-red-700 font-black">{formatMoney(p.debt)} ج</td>
+                  <Card>
+                    <div className="flex items-center justify-between gap-3 flex-wrap">
+                      <div className="font-black text-slate-900">الاستلامات</div>
+                      <div className="text-xs text-slate-500 font-bold">اسحب يمين/شمال على الموبايل</div>
+                    </div>
+                    <div className="mt-3 overflow-auto">
+                      <table className="min-w-[980px] w-full text-right">
+                        <thead className="bg-slate-50 text-slate-600 text-sm">
+                          <tr>
+                            <th className="p-3">حذف</th><th className="p-3">التاريخ</th><th className="p-3">المعمل</th><th className="p-3">المنتج</th>
+                            <th className="p-3">الكمية</th><th className="p-3">هالك</th><th className="p-3">سعر</th><th className="p-3">إجمالي</th>
+                            {currentUser.role==="admin" ? (<><th className="p-3">مدفوع</th><th className="p-3">متبقي علينا</th></>) : null}
+                            <th className="p-3">سجّلها</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </TableWrap>
+                        </thead>
+                        <tbody>
+                          {purchases.map(p => (
+                            <tr key={p.id} className="border-t border-slate-100">
+                              <td className="p-3"><SmallBtn className="text-red-600" onClick={()=>removeRow("purchase", p.id)}><Icon name="trash" size={18}/></SmallBtn></td>
+                              <td className="p-3 font-bold">{p.date}</td>
+                              <td className="p-3 font-black">{p.supplier}</td>
+                              <td className="p-3 font-bold">{p.product}</td>
+                              <td className="p-3 font-bold">{formatQty(p.quantity)} <span className="text-slate-400 text-xs">{productUnit(p.product)}</span></td>
+                              <td className="p-3 font-black text-orange-700">{formatQty(p.loss)}</td>
+                              <td className="p-3 font-bold">{formatMoney(p.buyPrice)} ج</td>
+                              <td className="p-3 font-black">{formatMoney(p.total)} ج</td>
+                              {currentUser.role==="admin" ? (
+                                <>
+                                  <td className="p-3 font-black text-emerald-700">{formatMoney(p.paid)} ج</td>
+                                  <td className="p-3 font-black text-red-700">{formatMoney(p.debt)} ج</td>
+                                </>
+                              ) : null}
+                              <td className="p-3 text-slate-500 font-black">{p.createdBy || "-"}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </Card>
                 </div>
               )}
 
-              {/* SALES */}
-              {activeTab === "sales" && (
-                <div className="space-y-6">
+              {activeTab==="sales" && (
+                <div className="space-y-4">
                   <Card>
-                    <h3 className="text-lg font-black text-slate-800 mb-4 flex items-center gap-2">
-                      <span className="text-emerald-600"><Icon name="plus" size={20}/></span>
-                      تسجيل عملية بيع / توزيع
-                    </h3>
+                    <div className="font-black text-slate-900 flex items-center gap-2"><Icon name="truck" size={18}/> تسجيل بيع</div>
+                    {err.sale && <Notice variant="warn"><div className="font-black">{err.sale}</div></Notice>}
 
-                    {errors.sale && (
-                      <Notice variant="warn"><div className="font-black">{errors.sale}</div></Notice>
-                    )}
-
-                    <div className="grid grid-cols-1 md:grid-cols-8 gap-4 mt-4">
-                      <Field label="التاريخ">
-                        <Input type="date" value={saleForm.date} onChange={(e) => setSaleForm(f => ({ ...f, date: e.target.value }))} />
-                      </Field>
-
-                      <Field label="العميل/المزرعة">
-                        <Select value={saleForm.customer} onChange={(e) => setSaleForm(f => ({ ...f, customer: e.target.value }))}>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-3">
+                      <Field label="التاريخ"><Input type="date" value={saleForm.date} onChange={(e)=>setSaleForm(f=>({...f,date:e.target.value}))}/></Field>
+                      <Field label="العميل">
+                        <Select value={saleForm.customer} onChange={(e)=>setSaleForm(f=>({...f,customer:e.target.value}))}>
                           {customers.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
                         </Select>
                       </Field>
-
-                      <Field label="الموزع/السائق">
-                        <Select value={saleForm.driver} onChange={(e) => setSaleForm(f => ({ ...f, driver: e.target.value }))}>
-                          {driversList.map(d => <option key={d} value={d}>{d}</option>)}
+                      <Field label="الموزع">
+                        <Select value={saleForm.driver} onChange={(e)=>setSaleForm(f=>({...f,driver:e.target.value}))}>
+                          {drivers.map(d => <option key={d.id} value={d.name}>{d.name}</option>)}
                         </Select>
                       </Field>
-
                       <Field label="المنتج">
-                        <Select value={saleForm.product} onChange={(e) => setSaleForm(f => ({ ...f, product: e.target.value }))}>
-                          {products.map(p => (
-                            <option key={p.id} value={p.name}>
-                              {p.name} (متاح: {formatQty(stockByProduct[p.name] || 0)} {p.unit})
-                            </option>
-                          ))}
+                        <Select value={saleForm.product} onChange={(e)=>setSaleForm(f=>({...f,product:e.target.value}))}>
+                          {products.map(p => <option key={p.id} value={p.name}>{p.name} (متاح: {formatQty(stockByProduct[p.name]||0)} {p.unit})</option>)}
                         </Select>
                       </Field>
+                      <Field label={`الكمية (${productUnit(saleForm.product)})`}><Input type="number" value={saleForm.quantity} onChange={(e)=>setSaleForm(f=>({...f,quantity:e.target.value}))} placeholder="4000"/></Field>
+                      <Field label="سعر البيع / وحدة"><Input type="number" step="0.01" value={saleForm.sellPrice} onChange={(e)=>setSaleForm(f=>({...f,sellPrice:e.target.value}))} placeholder="27"/></Field>
+                      <Field label="المحصل"><Input type="number" step="0.01" value={saleForm.paid} onChange={(e)=>setSaleForm(f=>({...f,paid:e.target.value}))} placeholder="80000"/></Field>
+                      <Field label="ملاحظات (اختياري)"><Input value={saleForm.notes} onChange={(e)=>setSaleForm(f=>({...f,notes:e.target.value}))} placeholder="اختياري"/></Field>
 
-                      <Field label={`الكمية (${productUnit(saleForm.product)})`}>
-                        <Input type="number" value={saleForm.quantity} onChange={(e) => setSaleForm(f => ({ ...f, quantity: e.target.value }))} placeholder="مثال: 4000" />
-                      </Field>
-
-                      <Field label="سعر البيع / وحدة">
-                        <Input type="number" step="0.01" value={saleForm.sellPrice} onChange={(e) => setSaleForm(f => ({ ...f, sellPrice: e.target.value }))} placeholder="مثال: 27" />
-                      </Field>
-
-                      <Field label="المحصل نقداً">
-                        <Input type="number" step="0.01" value={saleForm.paid} onChange={(e) => setSaleForm(f => ({ ...f, paid: e.target.value }))} placeholder="مثال: 80000" />
-                      </Field>
-
-                      <Button variant="success" onClick={addSale}>
-                        <Icon name="truck" size={18}/> تسجيل
-                      </Button>
-
-                      <Field label="ملاحظات" className="md:col-span-8">
-                        <Input value={saleForm.notes} onChange={(e) => setSaleForm(f => ({ ...f, notes: e.target.value }))} placeholder="اختياري" />
-                      </Field>
-                    </div>
-                  </Card>
-
-                  <TableWrap>
-                    <table className="w-full text-right">
-                      <thead className="bg-slate-50 text-slate-600 text-sm">
-                        <tr>
-                          <th className="p-4">حذف</th>
-                          <th className="p-4">التاريخ</th>
-                          <th className="p-4">العميل</th>
-                          <th className="p-4">الموزع</th>
-                          <th className="p-4">المنتج</th>
-                          <th className="p-4">الكمية</th>
-                          <th className="p-4">سعر البيع</th>
-                          <th className="p-4">الإجمالي</th>
-                          <th className="p-4 text-emerald-700">المحصل</th>
-                          <th className="p-4 text-orange-700">آجل (لنا)</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {sales.map(s => (
-                          <tr key={s.id} className="border-t border-slate-100 hover:bg-slate-50">
-                            <td className="p-4">
-                              <button onClick={() => removeRow("sale", s.id)} className="p-2 rounded-lg hover:bg-red-50 text-red-600">
-                                <Icon name="trash" size={18}/>
-                              </button>
-                            </td>
-                            <td className="p-4">{s.date}</td>
-                            <td className="p-4 font-black">{s.customer}</td>
-                            <td className="p-4 font-bold">{s.driver}</td>
-                            <td className="p-4 font-bold">{s.product}</td>
-                            <td className="p-4">{formatQty(s.quantity)} <span className="text-slate-400 text-xs">{productUnit(s.product)}</span></td>
-                            <td className="p-4">{formatMoney(s.sellPrice)} ج</td>
-                            <td className="p-4 font-black">{formatMoney(s.total)} ج</td>
-                            <td className="p-4 text-emerald-700 font-black">{formatMoney(s.paid)} ج</td>
-                            <td className="p-4 text-orange-700 font-black">{formatMoney(s.debt)} ج</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </TableWrap>
-                </div>
-              )}
-
-              {/* SETTLEMENTS */}
-              {activeTab === "settlements" && (
-                <div className="space-y-6">
-                  <Notice variant="info">
-                    <div className="font-black">
-                      تقفيل اليومية مرتبط بالفلتر بالتاريخ في أعلى الصفحة. اختار تاريخ علشان يظهر التقفيل.
-                      <div className="text-xs text-blue-900/70 font-bold mt-1">
-                        الصافي المطلوب توريده = (المحصل) - (مصروفات الطريق)
+                      <div className="sm:col-span-2 lg:col-span-4">
+                        <Button variant="success" onClick={addSale}><Icon name="plus" size={18}/> تسجيل البيع</Button>
                       </div>
                     </div>
-                  </Notice>
-
-                  {!filterDate ? (
-                    <Card><p className="text-slate-600 font-black">اختار تاريخ من الفلتر فوق علشان تشوف تقفيل اليومية.</p></Card>
-                  ) : driverSettlements.length === 0 ? (
-                    <Card><p className="text-slate-600 font-black">مفيش بيانات موزعين للتاريخ ده.</p></Card>
-                  ) : (
-                    <div className="grid grid-cols-1 gap-6">
-                      {driverSettlements.map(d => (
-                        <Card key={d.name} className="border border-slate-200">
-                          <div className="flex justify-between items-center mb-6 border-b pb-4">
-                            <h3 className="text-xl font-black text-slate-800 flex items-center gap-2">
-                              <Icon name="truck" size={20} className="text-slate-500"/>
-                              الموزع: {d.name}
-                            </h3>
-                            <span className="bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-sm font-black">
-                              باع {formatQty(d.totalQty)}
-                            </span>
-                          </div>
-
-                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                            <div className="p-4 bg-slate-50 rounded-xl">
-                              <p className="text-sm text-slate-500 font-black">إجمالي قيمة البضاعة</p>
-                              <p className="text-lg font-black">{formatMoney(d.totalValue)} ج</p>
-                            </div>
-                            <div className="p-4 bg-emerald-50 rounded-xl">
-                              <p className="text-sm text-emerald-700 font-black">الكاش المحصل</p>
-                              <p className="text-lg font-black text-emerald-700">{formatMoney(d.cashCollected)} ج</p>
-                            </div>
-                            <div className="p-4 bg-orange-50 rounded-xl">
-                              <p className="text-sm text-orange-700 font-black">آجل (عند العملاء)</p>
-                              <p className="text-lg font-black text-orange-700">{formatMoney(d.debtLeft)} ج</p>
-                            </div>
-                            <div className="p-4 bg-red-50 rounded-xl">
-                              <p className="text-sm text-red-700 font-black">مصروفات الطريق</p>
-                              <p className="text-lg font-black text-red-700">{formatMoney(d.expenses)} ج</p>
-                            </div>
-                          </div>
-
-                          <div className="flex justify-between items-center bg-blue-600 text-white p-4 rounded-xl">
-                            <span className="text-lg font-black">الصافي المطلوب توريده للخزنة:</span>
-                            <span className="text-3xl font-black">{formatMoney(d.netRequiredToReturn)} ج.م</span>
-                          </div>
-                        </Card>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* EXPENSES */}
-              {activeTab === "expenses" && (
-                <div className="space-y-6">
-                  <Card>
-                    <h3 className="text-lg font-black text-slate-800 mb-4 flex items-center gap-2">
-                      <span className="text-red-500"><Icon name="plus" size={20}/></span>
-                      إضافة مصروف
-                    </h3>
-
-                    {errors.expense && (
-                      <Notice variant="warn"><div className="font-black">{errors.expense}</div></Notice>
-                    )}
-
-                    <div className="grid grid-cols-1 md:grid-cols-7 gap-4 mt-4">
-                      <Field label="التاريخ">
-                        <Input type="date" value={expenseForm.date} onChange={(e) => setExpenseForm(f => ({ ...f, date: e.target.value }))} />
-                      </Field>
-
-                      <Field label="نوع المصروف">
-                        <Input value={expenseForm.category} onChange={(e) => setExpenseForm(f => ({ ...f, category: e.target.value }))} placeholder="بنزين / كارتة / عمالة..." />
-                      </Field>
-
-                      <Field label="الموزع (اختياري)">
-                        <Select value={expenseForm.driver} onChange={(e) => setExpenseForm(f => ({ ...f, driver: e.target.value }))}>
-                          <option value="">-</option>
-                          {driversList.map(d => <option key={d} value={d}>{d}</option>)}
-                        </Select>
-                      </Field>
-
-                      <Field label="المبلغ">
-                        <Input type="number" step="0.01" value={expenseForm.amount} onChange={(e) => setExpenseForm(f => ({ ...f, amount: e.target.value }))} placeholder="مثال: 400" />
-                      </Field>
-
-                      <Field label="ملاحظات" className="md:col-span-2">
-                        <Input value={expenseForm.notes} onChange={(e) => setExpenseForm(f => ({ ...f, notes: e.target.value }))} placeholder="اختياري" />
-                      </Field>
-
-                      <Button variant="danger" onClick={addExpense}>
-                        <Icon name="receipt" size={18}/> تسجيل
-                      </Button>
-                    </div>
                   </Card>
 
-                  <TableWrap>
-                    <table className="w-full text-right">
-                      <thead className="bg-slate-50 text-slate-600 text-sm">
-                        <tr>
-                          <th className="p-4">حذف</th>
-                          <th className="p-4">التاريخ</th>
-                          <th className="p-4">نوع المصروف</th>
-                          <th className="p-4">الموزع</th>
-                          <th className="p-4">ملاحظات</th>
-                          <th className="p-4 text-red-700">المبلغ</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {expenses.map(e => (
-                          <tr key={e.id} className="border-t border-slate-100 hover:bg-slate-50">
-                            <td className="p-4">
-                              <button onClick={() => removeRow("expense", e.id)} className="p-2 rounded-lg hover:bg-red-50 text-red-600">
-                                <Icon name="trash" size={18}/>
-                              </button>
-                            </td>
-                            <td className="p-4">{e.date}</td>
-                            <td className="p-4 font-black">{e.category}</td>
-                            <td className="p-4 font-bold">{e.driver || "-"}</td>
-                            <td className="p-4 text-slate-500 font-bold">{e.notes || "-"}</td>
-                            <td className="p-4 text-red-700 font-black">{formatMoney(e.amount)} ج</td>
+                  <Card>
+                    <div className="flex items-center justify-between gap-3 flex-wrap">
+                      <div className="font-black text-slate-900">المبيعات</div>
+                      <div className="text-xs text-slate-500 font-bold">اسحب يمين/شمال على الموبايل</div>
+                    </div>
+                    <div className="mt-3 overflow-auto">
+                      <table className="min-w-[980px] w-full text-right">
+                        <thead className="bg-slate-50 text-slate-600 text-sm">
+                          <tr>
+                            <th className="p-3">حذف</th><th className="p-3">التاريخ</th><th className="p-3">العميل</th><th className="p-3">الموزع</th><th className="p-3">المنتج</th>
+                            <th className="p-3">الكمية</th><th className="p-3">سعر</th><th className="p-3">إجمالي</th><th className="p-3">محصل</th>
+                            {currentUser.role==="admin" ? <th className="p-3">آجل</th> : null}
+                            <th className="p-3">سجّلها</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </TableWrap>
-                </div>
-              )}
-
-              {/* PEOPLE */}
-              {activeTab === "people" && (
-                <PeopleSection
-                  suppliers={suppliers}
-                  customers={customers}
-                  employees={employees}
-                  supplierForm={supplierForm}
-                  setSupplierForm={setSupplierForm}
-                  customerForm={customerForm}
-                  setCustomerForm={setCustomerForm}
-                  employeeForm={employeeForm}
-                  setEmployeeForm={setEmployeeForm}
-                  addSupplier={addSupplier}
-                  addCustomer={addCustomer}
-                  addEmployee={addEmployee}
-                  removeRow={removeRow}
-                  error={errors.people}
-                />
-              )}
-
-              {/* PAYROLL */}
-              {activeTab === "payroll" && (
-                <div className="space-y-6">
-                  <Card>
-                    <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-                      <div>
-                        <h3 className="text-lg font-black text-slate-800 mb-1">مسير الرواتب والعمولات</h3>
-                        <p className="text-sm text-slate-500 font-bold">العمولة: (الكمية/1000) × عمولة الألف</p>
-                      </div>
-                      <Field label="اختر الشهر (YYYY-MM)">
-                        <Input type="month" value={payrollMonth} onChange={(e) => setPayrollMonth(e.target.value)} />
-                      </Field>
-                    </div>
-                  </Card>
-
-                  <Card>
-                    <h3 className="text-lg font-black text-slate-800 mb-4 flex items-center gap-2">
-                      <span className="text-blue-600"><Icon name="plus" size={20}/></span>
-                      إضافة سلفة/خصم/مكافأة
-                    </h3>
-
-                    {errors.payroll && (
-                      <Notice variant="warn"><div className="font-black">{errors.payroll}</div></Notice>
-                    )}
-
-                    <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
-                      <Field label="التاريخ">
-                        <Input type="date" value={payrollForm.date} onChange={(e) => setPayrollForm(f => ({ ...f, date: e.target.value }))} />
-                      </Field>
-
-                      <Field label="الموظف">
-                        <Select value={payrollForm.employee} onChange={(e) => setPayrollForm(f => ({ ...f, employee: e.target.value }))}>
-                          {employees.filter(e => e.active).map(e => <option key={e.id} value={e.name}>{e.name}</option>)}
-                        </Select>
-                      </Field>
-
-                      <Field label="النوع">
-                        <Select value={payrollForm.kind} onChange={(e) => setPayrollForm(f => ({ ...f, kind: e.target.value }))}>
-                          <option value="سلفة">سلفة</option>
-                          <option value="خصم">خصم</option>
-                          <option value="مكافأة">مكافأة</option>
-                        </Select>
-                      </Field>
-
-                      <Field label="المبلغ">
-                        <Input type="number" step="0.01" value={payrollForm.amount} onChange={(e) => setPayrollForm(f => ({ ...f, amount: e.target.value }))} placeholder="مثال: 500" />
-                      </Field>
-
-                      <Field label="ملاحظات">
-                        <Input value={payrollForm.notes} onChange={(e) => setPayrollForm(f => ({ ...f, notes: e.target.value }))} placeholder="اختياري" />
-                      </Field>
-
-                      <Button onClick={addPayrollTx}>
-                        <Icon name="banknote" size={18}/> حفظ
-                      </Button>
-                    </div>
-                  </Card>
-
-                  <TableWrap>
-                    <table className="w-full text-right">
-                      <thead className="bg-slate-50 text-slate-600 text-sm">
-                        <tr>
-                          <th className="p-4">حذف</th>
-                          <th className="p-4">التاريخ</th>
-                          <th className="p-4">الموظف</th>
-                          <th className="p-4">النوع</th>
-                          <th className="p-4">المبلغ</th>
-                          <th className="p-4">ملاحظات</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {payrollTx.map(t => (
-                          <tr key={t.id} className="border-t border-slate-100 hover:bg-slate-50">
-                            <td className="p-4">
-                              <button onClick={() => removeRow("payrollTx", t.id)} className="p-2 rounded-lg hover:bg-red-50 text-red-600">
-                                <Icon name="trash" size={18}/>
-                              </button>
-                            </td>
-                            <td className="p-4">{t.date}</td>
-                            <td className="p-4 font-black">{t.employee}</td>
-                            <td className="p-4 font-bold">{t.kind}</td>
-                            <td className="p-4 font-black">{formatMoney(t.amount)} ج</td>
-                            <td className="p-4 text-slate-500 font-bold">{t.notes || "-"}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </TableWrap>
-
-                  <Card>
-                    <h3 className="text-lg font-black text-slate-800 mb-4 flex items-center gap-2">
-                      <span className="text-slate-700"><Icon name="user" size={20}/></span>
-                      ملخص الشهر {payrollMonth ? `(${payrollMonth})` : ""}
-                    </h3>
-
-                    {!payrollMonth ? (
-                      <p className="text-slate-600 font-black">اختار الشهر علشان يظهر الملخص.</p>
-                    ) : (
-                      <div className="overflow-auto">
-                        <table className="w-full text-right">
-                          <thead className="bg-slate-50 text-slate-600 text-sm">
-                            <tr>
-                              <th className="p-4">الموظف</th>
-                              <th className="p-4">الوظيفة</th>
-                              <th className="p-4">مباع (عدد)</th>
-                              <th className="p-4">الأساسي</th>
-                              <th className="p-4">العمولة</th>
-                              <th className="p-4">سلف/خصومات/مكافآت</th>
-                              <th className="p-4 font-black">الصافي</th>
+                        </thead>
+                        <tbody>
+                          {sales.map(s => (
+                            <tr key={s.id} className="border-t border-slate-100">
+                              <td className="p-3"><SmallBtn className="text-red-600" onClick={()=>removeRow("sale", s.id)}><Icon name="trash" size={18}/></SmallBtn></td>
+                              <td className="p-3 font-bold">{s.date}</td>
+                              <td className="p-3 font-black">{s.customer}</td>
+                              <td className="p-3 font-bold">{s.driver}</td>
+                              <td className="p-3 font-bold">{s.product}</td>
+                              <td className="p-3 font-bold">{formatQty(s.quantity)} <span className="text-slate-400 text-xs">{productUnit(s.product)}</span></td>
+                              <td className="p-3 font-bold">{formatMoney(s.sellPrice)} ج</td>
+                              <td className="p-3 font-black">{formatMoney(s.total)} ج</td>
+                              <td className="p-3 font-black text-emerald-700">{formatMoney(s.paid)} ج</td>
+                              {currentUser.role==="admin" ? <td className="p-3 font-black text-orange-700">{formatMoney(s.debt)} ج</td> : null}
+                              <td className="p-3 text-slate-500 font-black">{s.createdBy || "-"}</td>
                             </tr>
-                          </thead>
-                          <tbody>
-                            {payrollSummary.map(r => (
-                              <tr key={r.name} className="border-t border-slate-100 hover:bg-slate-50">
-                                <td className="p-4 font-black">{r.name}</td>
-                                <td className="p-4 font-bold">{r.role}</td>
-                                <td className="p-4 font-bold">{formatQty(r.soldQty)}</td>
-                                <td className="p-4 font-bold">{formatMoney(r.base)} ج</td>
-                                <td className="p-4 text-emerald-700 font-black">{formatMoney(r.commission)} ج</td>
-                                <td className={"p-4 font-black " + (r.adjustments < 0 ? "text-red-700" : "text-blue-700")}>
-                                  {formatMoney(r.adjustments)} ج
-                                </td>
-                                <td className="p-4 font-black text-slate-900">{formatMoney(r.net)} ج</td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </Card>
+                </div>
+              )}
+
+              {activeTab==="expenses" && (
+                <div className="space-y-4">
+                  <Card>
+                    <div className="font-black text-slate-900 flex items-center gap-2"><Icon name="receipt" size={18}/> تسجيل مصروف</div>
+                    {err.expense && <Notice variant="warn"><div className="font-black">{err.expense}</div></Notice>}
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-3">
+                      <Field label="التاريخ"><Input type="date" value={expenseForm.date} onChange={(e)=>setExpenseForm(f=>({...f,date:e.target.value}))}/></Field>
+                      <Field label="نوع المصروف"><Input value={expenseForm.category} onChange={(e)=>setExpenseForm(f=>({...f,category:e.target.value}))} placeholder="بنزين/كارتة..."/></Field>
+                      <Field label="الموزع (اختياري)">
+                        <Select value={expenseForm.driver} onChange={(e)=>setExpenseForm(f=>({...f,driver:e.target.value}))}>
+                          <option value="">-</option>
+                          {drivers.map(d => <option key={d.id} value={d.name}>{d.name}</option>)}
+                        </Select>
+                      </Field>
+                      <Field label="المبلغ"><Input type="number" step="0.01" value={expenseForm.amount} onChange={(e)=>setExpenseForm(f=>({...f,amount:e.target.value}))} placeholder="400"/></Field>
+                      <Field label="ملاحظات (اختياري)" className="lg:col-span-3"><Input value={expenseForm.notes} onChange={(e)=>setExpenseForm(f=>({...f,notes:e.target.value}))} placeholder="اختياري"/></Field>
+                      <div className="lg:col-span-1">
+                        <Button variant="danger" onClick={addExpense}><Icon name="plus" size={18}/> حفظ المصروف</Button>
+                      </div>
+                    </div>
+                  </Card>
+                </div>
+              )}
+
+              {activeTab==="receipts" && (
+                <div className="space-y-4">
+                  <Notice variant="info"><div className="font-black">اعمل إيصال لـ Alamal Group باختيار التاريخ + العميل.</div></Notice>
+
+                  <Card>
+                    <div className="font-black text-slate-900 flex items-center gap-2"><Icon name="printer" size={18}/> إصدار إيصال</div>
+                    {receiptErr && <Notice variant="warn"><div className="font-black">{receiptErr}</div></Notice>}
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-3">
+                      <Field label="التاريخ"><Input type="date" value={receiptDate} onChange={(e)=>setReceiptDate(e.target.value)} /></Field>
+                      <Field label="العميل">
+                        <Select value={receiptCustomer} onChange={(e)=>setReceiptCustomer(e.target.value)}>
+                          {customers.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
+                        </Select>
+                      </Field>
+                      <Field label="الموزع (اختياري)">
+                        <Select value={receiptDriver} onChange={(e)=>setReceiptDriver(e.target.value)}>
+                          <option value="">الكل</option>
+                          {drivers.map(d => <option key={d.id} value={d.name}>{d.name}</option>)}
+                        </Select>
+                      </Field>
+                      <Field label="ملاحظات (اختياري)"><Input value={receiptNotes} onChange={(e)=>setReceiptNotes(e.target.value)} placeholder="اختياري" /></Field>
+
+                      <div className="sm:col-span-2 lg:col-span-4 grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        <Button onClick={buildReceipt}><Icon name="receipt" size={18}/> إنشاء معاينة</Button>
+                        <Button variant="success" onClick={printReceipt} disabled={!receiptPreview}><Icon name="printer" size={18}/> طباعة</Button>
+                        <Button variant="secondary" onClick={()=>{setReceiptPreview(null);setReceiptErr("");}}>مسح</Button>
+                      </div>
+                    </div>
+                  </Card>
+                </div>
+              )}
+
+              {activeTab==="settings" && (
+                <div className="space-y-4">
+                  <Card>
+                    <div className="font-black text-slate-900 flex items-center gap-2"><Icon name="settings" size={18}/> الإعدادات</div>
+                    <Notice variant="info">
+                      <div className="font-black">
+                        ✅ الموظف: <span className="underline">علي عبدالله</span> (username: <b>ali</b>) صلاحياته: <b>إدخال بيانات فقط</b>.
+                        <div className="text-xs text-blue-900/70 font-bold mt-1">
+                          تنبيه: ده نظام LocalStorage (بدون سيرفر). للأمان الحقيقي نحتاج Back-end + حسابات حقيقية.
+                        </div>
+                      </div>
+                    </Notice>
+
+                    {currentUser.role==="admin" && (
+                      <div className="mt-4">
+                        <h4 className="font-black text-slate-900 mb-2">تغيير PIN</h4>
+                        {err.admin && <Notice variant="warn"><div className="font-black">{err.admin}</div></Notice>}
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                          <Field label="المستخدم">
+                            <Select value={pinEdit.username} onChange={(e)=>setPinEdit(p=>({...p,username:e.target.value}))}>
+                              {users.map(u => <option key={u.id} value={u.username}>{u.username} — {u.displayName}</option>)}
+                            </Select>
+                          </Field>
+                          <Field label="PIN جديد"><Input value={pinEdit.newPin} onChange={(e)=>setPinEdit(p=>({...p,newPin:e.target.value}))} inputMode="numeric" placeholder="مثال: 7788"/></Field>
+                          <div className="flex items-end"><Button onClick={changePin}>حفظ</Button></div>
+                        </div>
                       </div>
                     )}
                   </Card>
                 </div>
+              )}
+
+              {currentUser.role!=="admin" && ["dashboard","products","settlements"].includes(activeTab) && (
+                <Card><Notice variant="warn"><div className="font-black">ممنوع الدخول لهذه الشاشة. صلاحياتك: إدخال بيانات فقط.</div></Notice></Card>
               )}
             </main>
           </div>
@@ -1245,208 +897,7 @@
       );
     }
 
-    function PeopleSection({
-      suppliers, customers, employees,
-      supplierForm, setSupplierForm,
-      customerForm, setCustomerForm,
-      employeeForm, setEmployeeForm,
-      addSupplier, addCustomer, addEmployee,
-      removeRow, error
-    }) {
-      const [subTab, setSubTab] = useState("customers");
-
-      return (
-        <div className="space-y-6">
-          {error && (
-            <Notice variant="warn"><div className="font-black">{error}</div></Notice>
-          )}
-
-          <div className="flex gap-2 flex-wrap">
-            <Button variant={subTab === "customers" ? "primary" : "secondary"} onClick={() => setSubTab("customers")}>
-              <Icon name="users" size={18}/> العملاء
-            </Button>
-            <Button variant={subTab === "suppliers" ? "primary" : "secondary"} onClick={() => setSubTab("suppliers")}>
-              <Icon name="building" size={18}/> المعامل
-            </Button>
-            <Button variant={subTab === "employees" ? "primary" : "secondary"} onClick={() => setSubTab("employees")}>
-              <Icon name="user" size={18}/> الموظفين
-            </Button>
-          </div>
-
-          {/* CUSTOMERS */}
-          {subTab === "customers" && (
-            <div className="space-y-6">
-              <Card>
-                <h3 className="text-lg font-black text-slate-800 mb-4 flex items-center gap-2">
-                  <span className="text-blue-600"><Icon name="plus" size={20}/></span>
-                  إضافة عميل/مزرعة
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <Field label="الاسم">
-                    <Input value={customerForm.name} onChange={(e) => setCustomerForm(f => ({ ...f, name: e.target.value }))} placeholder="مزرعة..." />
-                  </Field>
-                  <Field label="الموبايل">
-                    <Input value={customerForm.phone} onChange={(e) => setCustomerForm(f => ({ ...f, phone: e.target.value }))} placeholder="اختياري" />
-                  </Field>
-                  <Field label="المنطقة">
-                    <Input value={customerForm.area} onChange={(e) => setCustomerForm(f => ({ ...f, area: e.target.value }))} placeholder="اختياري" />
-                  </Field>
-                  <Button onClick={addCustomer}>
-                    <Icon name="users" size={18}/> حفظ
-                  </Button>
-                </div>
-              </Card>
-
-              <TableWrap>
-                <table className="w-full text-right">
-                  <thead className="bg-slate-50 text-slate-600 text-sm">
-                    <tr>
-                      <th className="p-4">حذف</th>
-                      <th className="p-4">الاسم</th>
-                      <th className="p-4">الموبايل</th>
-                      <th className="p-4">المنطقة</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {customers.map(c => (
-                      <tr key={c.id} className="border-t border-slate-100 hover:bg-slate-50">
-                        <td className="p-4">
-                          <button onClick={() => removeRow("customer", c.id)} className="p-2 rounded-lg hover:bg-red-50 text-red-600">
-                            <Icon name="trash" size={18}/>
-                          </button>
-                        </td>
-                        <td className="p-4 font-black">{c.name}</td>
-                        <td className="p-4 font-bold">{c.phone || "-"}</td>
-                        <td className="p-4 font-bold">{c.area || "-"}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </TableWrap>
-            </div>
-          )}
-
-          {/* SUPPLIERS */}
-          {subTab === "suppliers" && (
-            <div className="space-y-6">
-              <Card>
-                <h3 className="text-lg font-black text-slate-800 mb-4 flex items-center gap-2">
-                  <span className="text-blue-600"><Icon name="plus" size={20}/></span>
-                  إضافة معمل/مورد
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <Field label="الاسم">
-                    <Input value={supplierForm.name} onChange={(e) => setSupplierForm(f => ({ ...f, name: e.target.value }))} placeholder="معمل..." />
-                  </Field>
-                  <Field label="الموبايل">
-                    <Input value={supplierForm.phone} onChange={(e) => setSupplierForm(f => ({ ...f, phone: e.target.value }))} placeholder="اختياري" />
-                  </Field>
-                  <Button onClick={addSupplier}>
-                    <Icon name="building" size={18}/> حفظ
-                  </Button>
-                </div>
-              </Card>
-
-              <TableWrap>
-                <table className="w-full text-right">
-                  <thead className="bg-slate-50 text-slate-600 text-sm">
-                    <tr>
-                      <th className="p-4">حذف</th>
-                      <th className="p-4">الاسم</th>
-                      <th className="p-4">الموبايل</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {suppliers.map(s => (
-                      <tr key={s.id} className="border-t border-slate-100 hover:bg-slate-50">
-                        <td className="p-4">
-                          <button onClick={() => removeRow("supplier", s.id)} className="p-2 rounded-lg hover:bg-red-50 text-red-600">
-                            <Icon name="trash" size={18}/>
-                          </button>
-                        </td>
-                        <td className="p-4 font-black">{s.name}</td>
-                        <td className="p-4 font-bold">{s.phone || "-"}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </TableWrap>
-            </div>
-          )}
-
-          {/* EMPLOYEES */}
-          {subTab === "employees" && (
-            <div className="space-y-6">
-              <Card>
-                <h3 className="text-lg font-black text-slate-800 mb-4 flex items-center gap-2">
-                  <span className="text-blue-600"><Icon name="plus" size={20}/></span>
-                  إضافة موظف
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
-                  <Field label="الاسم">
-                    <Input value={employeeForm.name} onChange={(e) => setEmployeeForm(f => ({ ...f, name: e.target.value }))} placeholder="اسم الموظف" />
-                  </Field>
-                  <Field label="الوظيفة">
-                    <Select value={employeeForm.role} onChange={(e) => setEmployeeForm(f => ({ ...f, role: e.target.value }))}>
-                      <option value="سائق/موزع">سائق/موزع</option>
-                      <option value="عامل">عامل</option>
-                      <option value="إداري">إداري</option>
-                    </Select>
-                  </Field>
-                  <Field label="الموبايل">
-                    <Input value={employeeForm.phone} onChange={(e) => setEmployeeForm(f => ({ ...f, phone: e.target.value }))} placeholder="اختياري" />
-                  </Field>
-                  <Field label="الراتب الأساسي">
-                    <Input type="number" value={employeeForm.baseSalary} onChange={(e) => setEmployeeForm(f => ({ ...f, baseSalary: e.target.value }))} placeholder="مثال: 4500" />
-                  </Field>
-                  <Field label="عمولة الألف (للسائق)">
-                    <Input type="number" value={employeeForm.commissionPer1000} onChange={(e) => setEmployeeForm(f => ({ ...f, commissionPer1000: e.target.value }))} placeholder="مثال: 30" />
-                  </Field>
-                  <Button onClick={addEmployee}>
-                    <Icon name="user" size={18}/> حفظ
-                  </Button>
-                </div>
-              </Card>
-
-              <TableWrap>
-                <table className="w-full text-right">
-                  <thead className="bg-slate-50 text-slate-600 text-sm">
-                    <tr>
-                      <th className="p-4">حذف</th>
-                      <th className="p-4">الاسم</th>
-                      <th className="p-4">الوظيفة</th>
-                      <th className="p-4">الأساسي</th>
-                      <th className="p-4">عمولة الألف</th>
-                      <th className="p-4">الحالة</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {employees.map(e => (
-                      <tr key={e.id} className="border-t border-slate-100 hover:bg-slate-50">
-                        <td className="p-4">
-                          <button onClick={() => removeRow("employee", e.id)} className="p-2 rounded-lg hover:bg-red-50 text-red-600">
-                            <Icon name="trash" size={18}/>
-                          </button>
-                        </td>
-                        <td className="p-4 font-black">{e.name}</td>
-                        <td className="p-4 font-bold">{e.role}</td>
-                        <td className="p-4 font-bold">{formatMoney(e.baseSalary)} ج</td>
-                        <td className="p-4 font-bold">{formatMoney(e.commissionPer1000)} ج</td>
-                        <td className="p-4 font-black">{e.active ? "نشط" : "موقوف"}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </TableWrap>
-            </div>
-          )}
-        </div>
-      );
-    }
-
-    // Mount
-    const root = ReactDOM.createRoot(document.getElementById("root"));
-    root.render(<App />);
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
   </script>
 </body>
 </html>
